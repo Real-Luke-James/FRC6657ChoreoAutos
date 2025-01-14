@@ -137,9 +137,37 @@ public class Swerve extends SubsystemBase {
     return this.run(
         () -> {
           Logger.recordOutput("Swerve/Repulsor/EndGoal", target.get());
-          repulsor.setGoal(target.get().getTranslation());
-          repulsorController(getPose(), repulsor.getCmd(() -> getPose(), 0.1));
+          //Check if we are within 1 meter of the end goal
+          if (getPose().getTranslation().getDistance(target.get().getTranslation()) < 1) {
+            Logger.recordOutput("Swerve/PositioningMode", "PID");
+            positionController(target.get());
+          }else{
+            Logger.recordOutput("Swerve/PositioningMode", "Repulsor");
+            repulsor.setGoal(target.get().getTranslation());
+            repulsorController(getPose(), repulsor.getCmd(getPose(), getCurrentFieldRelativeSpeeds(), 2, true));
+          }
         });
+  }
+
+  public void positionController(Pose2d targetPose){
+
+    PIDController xController = AutoConstants.kXController_Position;
+    PIDController yController = AutoConstants.kYController_Position;
+    PIDController thetaController = AutoConstants.kThetaController_Position;
+
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    double xFeedback = xController.calculate(getPose().getX(), targetPose.getX());
+    double yFeedback = yController.calculate(getPose().getY(), targetPose.getY());
+    double rotationFeedback =
+        thetaController.calculate(getPose().getRotation().getRadians(), targetPose.getRotation().getRadians());
+
+    ChassisSpeeds out =
+        ChassisSpeeds.fromFieldRelativeSpeeds(
+            xFeedback, yFeedback, rotationFeedback, getPose().getRotation());
+
+    driveChassisSpeeds(out);
+
   }
 
   public void repulsorController(Pose2d currentPose, SwerveSample sample) {
