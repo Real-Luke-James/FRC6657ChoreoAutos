@@ -57,7 +57,7 @@ public class Constants {
     public static final PIDController kThetaController_Repulsor =
         new PIDController(100, 0, 0); // TODO: Tune
 
-    //Position PID
+    // Position PID
     public static final PIDController kXController_Position =
         new PIDController(5, 0, 0); // TODO: Tune
     public static final PIDController kYController_Position =
@@ -89,7 +89,8 @@ public class Constants {
             "Camera",
             new Transform3d(
                 new Translation3d(-0.302561, -0.294302, 0.24),
-                new Rotation3d(0, Units.degreesToRadians(-10), Math.PI - Units.degreesToRadians(50))),
+                new Rotation3d(
+                    0, Units.degreesToRadians(-10), Math.PI - Units.degreesToRadians(50))),
             Rotation2d.fromDegrees(95),
             new int[] {1280, 800});
 
@@ -161,13 +162,13 @@ public class Constants {
   }
 
   public static class Intake {
-    public static double PivotGearing = (20d/1) * (72d/28); //TODO: Verify
+    public static double gearing = (20d / 1) * (72d / 28); // TODO: Verify
+    public static double maxAngle = Units.degreesToRadians(117);
   }
 
   public static class Elevator {
-    public static double gearing = (5d/1) * (66d/22); //TODO: Verify
-    public static int stages = 3;
+    public static double gearing = (5d / 1) * (66d / 22); // TODO: Verify
     public static double maxHeight = Units.inchesToMeters(60);
+    public static int stages = 3;
   }
-
 }
