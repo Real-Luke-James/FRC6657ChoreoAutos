@@ -41,7 +41,7 @@ public class ModuleIO_Sim implements ModuleIO {
     driveConfig.Feedback.SensorToMechanismRatio = Swerve.DriveGearing.L3.reduction;
     driveConfig.Slot0.kS = 0;
     driveConfig.Slot0.kA = 0.65;
-    driveConfig.Slot0.kV = 12d / (Motors.KrakenRPS / Swerve.DriveGearing.L3.reduction);
+    driveConfig.Slot0.kV = 12d / (Motors.FalconRPS / Swerve.DriveGearing.L3.reduction);
     driveConfig.Slot0.kP = 4.0;
     driveConfig.Slot0.kD = 0.2;
 

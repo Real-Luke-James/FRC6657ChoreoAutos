@@ -51,11 +51,19 @@ public class Constants {
 
     // Repulsor
     public static final PIDController kXController_Repulsor =
-        new PIDController(40, 0, 0); // TODO: Tune
+        new PIDController(100, 0, 0); // TODO: Tune
     public static final PIDController kYController_Repulsor =
-        new PIDController(40, 0, 0); // TODO: Tune
+        new PIDController(100, 0, 0); // TODO: Tune
     public static final PIDController kThetaController_Repulsor =
-        new PIDController(40, 0, 0); // TODO: Tune
+        new PIDController(100, 0, 0); // TODO: Tune
+
+    //Position PID
+    public static final PIDController kXController_Position =
+        new PIDController(5, 0, 0); // TODO: Tune
+    public static final PIDController kYController_Position =
+        new PIDController(5, 0, 0); // TODO: Tune
+    public static final PIDController kThetaController_Position =
+        new PIDController(5, 0, 0); // TODO: Tune
   }
 
   public static class VisionConstants {
@@ -91,9 +99,6 @@ public class Constants {
   }
 
   public static class Motors {
-
-    public static double KrakenRPS =
-        Units.radiansPerSecondToRotationsPerMinute(DCMotor.getKrakenX60(1).freeSpeedRadPerSec) / 60;
     public static double FalconRPS =
         Units.radiansPerSecondToRotationsPerMinute(DCMotor.getFalcon500(1).freeSpeedRadPerSec) / 60;
   }
@@ -113,8 +118,8 @@ public class Constants {
     }
 
     public static double WheelDiameter = Units.inchesToMeters(4);
-    public static double TrackWidth = Units.inchesToMeters(26 - 5.25); // TODO: Verify
-    public static double TrackLength = Units.inchesToMeters(26 - 5.25); // TODO: Verify
+    public static double TrackWidth = Units.inchesToMeters(29 - 5.25);
+    public static double TrackLength = Units.inchesToMeters(29 - 5.25);
 
     public static Translation2d[] ModulePositions =
         new Translation2d[] {
@@ -154,4 +159,15 @@ public class Constants {
               "Back Right ", CAN.Swerve_BR_D.id, CAN.Swerve_BR_T.id, CAN.Swerve_BR_E.id);
     }
   }
+
+  public static class Intake {
+    public static double PivotGearing = (20d/1) * (72d/28); //TODO: Verify
+  }
+
+  public static class Elevator {
+    public static double gearing = (5d/1) * (66d/22); //TODO: Verify
+    public static int stages = 3;
+    public static double maxHeight = Units.inchesToMeters(60);
+  }
+
 }
