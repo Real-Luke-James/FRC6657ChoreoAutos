@@ -41,7 +41,7 @@ public class ApriltagCamera {
 
     poseEstimator =
         new PhotonPoseEstimator(
-            AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo),
+            AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape),
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
             cameraInfo.robotToCamera);
   }

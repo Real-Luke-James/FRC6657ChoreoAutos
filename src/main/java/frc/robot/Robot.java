@@ -7,6 +7,7 @@ package frc.robot;
 import choreo.auto.AutoFactory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -115,7 +116,7 @@ public class Robot extends LoggedRobot {
         .a()
         .onTrue(
             drivebase.resetOdometry(
-                new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(30))));
+                new Pose2d(new Translation2d(11.75, 4), Rotation2d.fromDegrees(180))));
 
     driver.leftTrigger().onTrue(Commands.runOnce(intake::up, intake));
     driver.rightTrigger().onTrue(Commands.runOnce(intake::down, intake));
@@ -137,6 +138,10 @@ public class Robot extends LoggedRobot {
     }
 
     superstructure.update3DPose();
+
+    Logger.recordOutput(
+        "ReefCam Pose",
+        new Pose3d(drivebase.getPose()).transformBy(VisionConstants.cameraInfo.robotToCamera));
 
     CommandScheduler.getInstance().run();
   }

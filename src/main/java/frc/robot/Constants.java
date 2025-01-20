@@ -80,7 +80,8 @@ public class Constants {
         new CameraInfo(
             "Camera",
             new Transform3d(
-                new Translation3d(-0.343236, 0, 0.531201), new Rotation3d(0, -0.485314, Math.PI)),
+                new Translation3d(-0.302561, -0.294302, 0.24),
+                new Rotation3d(0, Units.degreesToRadians(-10), Math.PI - Units.degreesToRadians(50))),
             Rotation2d.fromDegrees(95),
             new int[] {1280, 800});
 
