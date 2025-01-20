@@ -6,25 +6,22 @@ import choreo.auto.AutoTrajectory;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import frc.robot.subsystems.drivebase.Swerve;
-import frc.robot.subsystems.example_intake.ExampleIntake;
+import frc.robot.subsystems.intake.Intake;
 import org.littletonrobotics.junction.Logger;
 
 public class Superstructure {
 
   Swerve drivebase;
-  ExampleIntake intake;
+  Intake intake;
 
-  public Superstructure(Swerve drivebase, ExampleIntake intake) {
+  public Superstructure(Swerve drivebase, Intake intake) {
     this.drivebase = drivebase;
     this.intake = intake;
   }
 
   public void update3DPose() {
-    Pose3d[] mechanismPoses = new Pose3d[4];
+    Pose3d[] mechanismPoses = new Pose3d[1];
     mechanismPoses[0] = new Pose3d();
-    mechanismPoses[1] = intake.getMechanismPose();
-    mechanismPoses[2] = new Pose3d();
-    mechanismPoses[3] = new Pose3d();
     Logger.recordOutput("3D Poses", mechanismPoses);
   }
 

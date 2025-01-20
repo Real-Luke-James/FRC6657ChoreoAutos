@@ -112,8 +112,8 @@ public class Constants {
     }
 
     public static double WheelDiameter = Units.inchesToMeters(4);
-    public static double TrackWidth = Units.inchesToMeters(26 - 5.25); // TODO: Verify
-    public static double TrackLength = Units.inchesToMeters(26 - 5.25); // TODO: Verify
+    public static double TrackWidth = Units.inchesToMeters(29 - 5.25);
+    public static double TrackLength = Units.inchesToMeters(29 - 5.25);
 
     public static Translation2d[] ModulePositions =
         new Translation2d[] {

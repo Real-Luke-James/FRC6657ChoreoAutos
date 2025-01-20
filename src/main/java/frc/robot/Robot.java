@@ -6,9 +6,6 @@ package frc.robot;
 
 import choreo.auto.AutoFactory;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -25,7 +22,15 @@ import frc.robot.subsystems.drivebase.ModuleIO;
 import frc.robot.subsystems.drivebase.ModuleIO_Real;
 import frc.robot.subsystems.drivebase.ModuleIO_Sim;
 import frc.robot.subsystems.drivebase.Swerve;
-import frc.robot.subsystems.example_intake.ExampleIntake;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO_Real;
+import frc.robot.subsystems.elevator.ElevatorIO_Sim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO_Real;
+import frc.robot.subsystems.intake.IntakeIO_Sim;
+import frc.robot.subsystems.outtake.Outtake;
+import frc.robot.subsystems.outtake.OuttakeIO_Real;
+import frc.robot.subsystems.outtake.OuttakeIO_Sim;
 import frc.robot.subsystems.vision.ApriltagCamera;
 import frc.robot.subsystems.vision.ApriltagCameraIO_Real;
 import frc.robot.subsystems.vision.ApriltagCameraIO_Sim;
@@ -39,7 +44,10 @@ public class Robot extends LoggedRobot {
   private CommandXboxController driver = new CommandXboxController(0);
 
   private Swerve drivebase;
-  private ExampleIntake intake;
+  private Intake intake;
+  private Elevator elevator;
+  private Outtake outtake;
+
   private ApriltagCamera[] cameras;
 
   private Superstructure superstructure;
@@ -65,7 +73,9 @@ public class Robot extends LoggedRobot {
                 },
             RobotBase.isReal() ? new GyroIO_Real() : new GyroIO() {});
 
-    intake = new ExampleIntake();
+    intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
+    elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
+    outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
 
     cameras =
         new ApriltagCamera[] {
@@ -85,8 +95,7 @@ public class Robot extends LoggedRobot {
                 drivebase::followTrajectory,
                 true,
                 drivebase)
-            .bind("intake_down", intake.down())
-            .bind("intake_up", intake.up());
+            .bind("nothing", Commands.none());
   }
 
   @SuppressWarnings("resource")
@@ -110,17 +119,6 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftY(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 7)));
-
-    driver
-        .a()
-        .onTrue(
-            drivebase.resetOdometry(
-                new Pose2d(new Translation2d(2, 2), Rotation2d.fromDegrees(30))));
-
-    driver.leftTrigger().onTrue(Commands.runOnce(intake::up, intake));
-    driver.rightTrigger().onTrue(Commands.runOnce(intake::down, intake));
-
-    driver.b().whileTrue(drivebase.repulsorCommand(() -> new Pose2d(2, 5.5, Rotation2d.kZero)));
 
     Logger.start();
   }
