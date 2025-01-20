@@ -90,9 +90,6 @@ public class Constants {
   }
 
   public static class Motors {
-
-    public static double KrakenRPS =
-        Units.radiansPerSecondToRotationsPerMinute(DCMotor.getKrakenX60(1).freeSpeedRadPerSec) / 60;
     public static double FalconRPS =
         Units.radiansPerSecondToRotationsPerMinute(DCMotor.getFalcon500(1).freeSpeedRadPerSec) / 60;
   }
@@ -153,4 +150,15 @@ public class Constants {
               "Back Right ", CAN.Swerve_BR_D.id, CAN.Swerve_BR_T.id, CAN.Swerve_BR_E.id);
     }
   }
+
+  public static class Intake {
+    public static double PivotGearing = (20d/1) * (72d/28); //TODO: Verify
+  }
+
+  public static class Elevator {
+    public static double gearing = (5d/1) * (66d/22); //TODO: Verify
+    public static int stages = 3;
+    public static double maxHeight = Units.inchesToMeters(60);
+  }
+
 }
