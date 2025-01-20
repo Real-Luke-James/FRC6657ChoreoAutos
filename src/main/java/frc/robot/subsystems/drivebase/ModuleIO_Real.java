@@ -66,11 +66,11 @@ public class ModuleIO_Real implements ModuleIO {
     driveConfig.CurrentLimits.StatorCurrentLimit = 80;
     driveConfig.CurrentLimits.SupplyCurrentLimit = 65;
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    driveConfig.Feedback.SensorToMechanismRatio = Swerve.DriveGearing.L3.reduction; // TODO Verify
+    driveConfig.Feedback.SensorToMechanismRatio = Swerve.DriveGearing.L3.reduction;
     driveConfig.Slot0.kS = 0; // TODO Tune
     driveConfig.Slot0.kA = 0; // TODO Tune
     driveConfig.Slot0.kV =
-        (12d / (Motors.KrakenRPS * Swerve.DriveGearing.L3.reduction)); // TODO Verify
+        (12d / (Motors.FalconRPS * Swerve.DriveGearing.L3.reduction)); // TODO Verify
     driveConfig.Slot0.kP = 0; // TODO Tune
     driveConfig.Slot0.kD = 0; // TODO Tune
 
