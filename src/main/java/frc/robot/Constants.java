@@ -1,5 +1,9 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -30,7 +34,9 @@ public class Constants {
     Swerve_FR_E(10),
     Swerve_BL_E(11),
     Swerve_BR_E(12),
-    Gyro(13);
+    Gyro(13),
+    Elevetor_Leader(15),
+    Elevator_Follower(16);
 
     public int id;
 
@@ -169,6 +175,33 @@ public class Constants {
   public static class Elevator {
     public static double gearing = (5d / 1) * (66d / 22); // TODO: Verify
     public static double maxHeight = Units.inchesToMeters(60);
+    public static double minHeight = Units.inchesToMeters(2);// TODO: this number is made up
     public static int stages = 3;
+    public static double setpointTollerance = 0.1;// meters?
+
+    public static Slot0Configs motorSlot0 = //TODO tune
+        new Slot0Configs()
+            .withKS(0)
+            .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS 
+            .withKP(70)
+            .withKI(0)
+            .withKD(0);
+
+    public static final double kSupplyLimit = 40;//TODO choose current limits
+    public static final double kStatorLimit = 80;
+
+    public static final CurrentLimitsConfigs currentConfigs =
+      new CurrentLimitsConfigs()
+          .withStatorCurrentLimit(kStatorLimit)
+          .withSupplyCurrentLimit(kSupplyLimit)
+          .withStatorCurrentLimitEnable(true)
+          .withSupplyCurrentLimitEnable(true);
+          //.withSupplyCurrentThreshold(kSupplyLimit)
+          //.withSupplyTimeThreshold(0); TODO are these necesary?
+
+    public static MotionMagicConfigs kMotionMagicConfig =
+        new MotionMagicConfigs()//TODO tune
+            .withMotionMagicCruiseVelocity(Units.degreesToRotations(800))
+            .withMotionMagicAcceleration(Units.degreesToRotations(1200));
   }
 }
