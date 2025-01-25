@@ -187,7 +187,7 @@ public class Constants {
             .withKI(0)
             .withKD(0);
 
-    public static final double kSupplyLimit = 40;//TODO choose current limits
+    public static final double kSupplyLimit = 40;
     public static final double kStatorLimit = 70;
 
     public static final CurrentLimitsConfigs currentConfigs =
@@ -195,9 +195,9 @@ public class Constants {
           .withStatorCurrentLimit(kStatorLimit)
           .withSupplyCurrentLimit(kSupplyLimit)
           .withStatorCurrentLimitEnable(true)
-          .withSupplyCurrentLimitEnable(true);
-          //.withSupplyCurrentThreshold(kSupplyLimit)
-          //.withSupplyTimeThreshold(0); TODO are these necesary?
+          .withSupplyCurrentLimitEnable(true)
+          .withSupplyCurrentLowerLimit(kSupplyLimit)
+          .withSupplyCurrentLowerTime(0);
 
     public static MotionMagicConfigs kMotionMagicConfig =
         new MotionMagicConfigs()//TODO tune

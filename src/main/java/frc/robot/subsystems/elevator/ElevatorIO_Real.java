@@ -16,7 +16,7 @@ public class ElevatorIO_Real implements ElevatorIO {
 
   public ElevatorIO_Real() {
 
-    // Configure the Leader motor
+    // Configure both motors
     var leaderConfigurator = leaderMotor.getConfigurator();
     var followConfigurator = followMotor.getConfigurator();
     var motorConfigs = new TalonFXConfiguration();
@@ -27,9 +27,9 @@ public class ElevatorIO_Real implements ElevatorIO {
     //motorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;//TODO verify
     motorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfigs.MotionMagic = Constants.Elevator.kMotionMagicConfig;
-    leaderConfigurator.apply(motorConfigs);
-    followConfigurator.apply(motorConfigs);
-    followMotor.setControl(new Follower(CAN.Elevetor_Leader.id, false));
+    leaderConfigurator.apply(motorConfigs); // Configure leader motor
+    followConfigurator.apply(motorConfigs); // Configure follow motor to the same thing
+    followMotor.setControl(new Follower(CAN.Elevetor_Leader.id, false)); // Only difference with the follow motor configuration is this line
     
 
     
