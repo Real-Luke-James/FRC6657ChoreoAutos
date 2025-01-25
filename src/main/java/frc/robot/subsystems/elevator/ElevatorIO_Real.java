@@ -14,6 +14,8 @@ public class ElevatorIO_Real implements ElevatorIO {
   TalonFX leaderMotor = new TalonFX(CAN.Elevetor_Leader.id);
   TalonFX followMotor = new TalonFX(CAN.Elevator_Follower.id);
 
+  private double kSetpoint = Constants.Elevator.minHeight;
+
   public ElevatorIO_Real() {
 
     // Configure both motors
@@ -59,15 +61,25 @@ public class ElevatorIO_Real implements ElevatorIO {
     leaderMotor.optimizeBusUtilization();
     followMotor.optimizeBusUtilization();
 
-    
-
+    changeSetpoint(Constants.Elevator.minHeight);
   }
 
   @Override
   public void updateInputs(ElevatorIOInputs inputs){
-    //inputs.position = leaderMotor.getPosition();
+    inputs.kSetpoint = kSetpoint;
+    inputs.kPosition = leaderMotor.getPosition().getValueAsDouble(); //TODO need to do unit conversions
+    inputs.kVelocity = leaderMotor.getVelocity().getValueAsDouble(); // also here
+    
+    inputs.leaderMotorTemp = leaderMotor.getDeviceTemp().getValueAsDouble();
+    inputs.followMotorTemp = followMotor.getDeviceTemp().getValueAsDouble();
+    inputs.leaderMotorCurrent = leaderMotor.getSupplyCurrent().getValueAsDouble();
+    inputs.followMotorCurrent = followMotor.getSupplyCurrent().getValueAsDouble();
+    inputs.leaderMotorVoltage = leaderMotor.getMotorVoltage().getValueAsDouble();
+    inputs.followMotorVoltage = followMotor.getMotorVoltage().getValueAsDouble();
   }
 
   @Override
-  public void changeSetpoint(double setpoint) {}
+  public void changeSetpoint(double setpoint) {
+    kSetpoint = setpoint;
+  }
 }

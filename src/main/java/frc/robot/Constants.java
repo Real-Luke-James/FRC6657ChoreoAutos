@@ -174,8 +174,8 @@ public class Constants {
 
   public static class Elevator {
     public static double gearing = (5d / 1) * (66d / 22); // TODO: Verify
-    public static double maxHeight = Units.inchesToMeters(60);
-    public static double minHeight = Units.inchesToMeters(0);// TODO: this number is made up
+    public static double maxHeight = Units.inchesToMeters(60); // TODO: Calculate
+    public static double minHeight = Units.inchesToMeters(0);
     public static int stages = 3;
     public static double setpointTollerance = Units.inchesToMeters(1);
 
