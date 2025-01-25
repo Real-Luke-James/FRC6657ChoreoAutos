@@ -175,9 +175,9 @@ public class Constants {
   public static class Elevator {
     public static double gearing = (5d / 1) * (66d / 22); // TODO: Verify
     public static double maxHeight = Units.inchesToMeters(60);
-    public static double minHeight = Units.inchesToMeters(2);// TODO: this number is made up
+    public static double minHeight = Units.inchesToMeters(0);// TODO: this number is made up
     public static int stages = 3;
-    public static double setpointTollerance = 0.1;// meters?
+    public static double setpointTollerance = Units.inchesToMeters(1);
 
     public static Slot0Configs motorSlot0 = //TODO tune
         new Slot0Configs()
@@ -188,7 +188,7 @@ public class Constants {
             .withKD(0);
 
     public static final double kSupplyLimit = 40;//TODO choose current limits
-    public static final double kStatorLimit = 80;
+    public static final double kStatorLimit = 70;
 
     public static final CurrentLimitsConfigs currentConfigs =
       new CurrentLimitsConfigs()
