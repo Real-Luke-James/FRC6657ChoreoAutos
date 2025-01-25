@@ -17,9 +17,9 @@ public interface ElevatorIO {
     public double followMotorTemp = 0.0; // Celcius
     public double followMotorVoltage = 0.0; // Volts
     public double followMotorCurrent = 0.0; // Amps
-    public double followMotorVelocity = 0.0; // RPM
+    //public double followMotorVelocity = 0.0; // RPM I don't think we need to track velocity for both motors
 
-    
+
   }
 
   public default void updateInputs(ElevatorIOInputs inputs) {}

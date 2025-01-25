@@ -31,9 +31,41 @@ public class ElevatorIO_Real implements ElevatorIO {
     followConfigurator.apply(motorConfigs); // Configure follow motor to the same thing
     followMotor.setControl(new Follower(CAN.Elevetor_Leader.id, false)); // Only difference with the follow motor configuration is this line
     
+    // grab important numbers for logging
+    var motorPostition = leaderMotor.getPosition(); // I don't think we need to track this for both motors
+    var motorVelocity = leaderMotor.getVelocity();
+    // acceleration?
+
+    var leaderMotorTemp = leaderMotor.getDeviceTemp();
+    var followMotorTemp = followMotor.getDeviceTemp();
+    var leaderMotorVoltage = leaderMotor.getMotorVoltage();
+    var followMotorVoltage = followMotor.getMotorVoltage();
+    var leaderMotorCurrent = leaderMotor.getSupplyCurrent(); // Supply current, not stator current right? for auto logging
+    var followMotorCurrent = followMotor.getSupplyCurrent();
+
+    leaderMotorTemp.setUpdateFrequency(Constants.mainLoopFrequency/4);
+    followMotorTemp.setUpdateFrequency(Constants.mainLoopFrequency/4);
+    motorPostition.setUpdateFrequency(Constants.mainLoopFrequency);
+    motorVelocity.setUpdateFrequency(Constants.mainLoopFrequency);
+    leaderMotorVoltage.setUpdateFrequency(Constants.mainLoopFrequency);
+    followMotorVoltage.setUpdateFrequency(Constants.mainLoopFrequency);
+    leaderMotorCurrent.setUpdateFrequency(Constants.mainLoopFrequency);
+    followMotorCurrent.setUpdateFrequency(Constants.mainLoopFrequency);
+
+    var closedLoopReferenceSignal = leaderMotor.getClosedLoopReference(); // what does this do?
+    closedLoopReferenceSignal.setUpdateFrequency(Constants.mainLoopFrequency);
+
+    // redices CAN bus usage
+    leaderMotor.optimizeBusUtilization();
+    followMotor.optimizeBusUtilization();
 
     
 
+  }
+
+  @Override
+  public void updateInputs(ElevatorIOInputs inputs){
+    //inputs.position = leaderMotor.getPosition();
   }
 
   @Override
