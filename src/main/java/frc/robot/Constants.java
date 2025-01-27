@@ -3,7 +3,6 @@ package frc.robot;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -179,10 +178,10 @@ public class Constants {
     public static int stages = 3;
     public static double setpointTollerance = Units.inchesToMeters(1);
 
-    public static Slot0Configs motorSlot0 = //TODO tune
+    public static Slot0Configs motorSlot0 = // TODO tune
         new Slot0Configs()
             .withKS(0)
-            .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS 
+            .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
             .withKP(70)
             .withKI(0)
             .withKD(0);
@@ -191,16 +190,16 @@ public class Constants {
     public static final double kStatorLimit = 70;
 
     public static final CurrentLimitsConfigs currentConfigs =
-      new CurrentLimitsConfigs()
-          .withStatorCurrentLimit(kStatorLimit)
-          .withSupplyCurrentLimit(kSupplyLimit)
-          .withStatorCurrentLimitEnable(true)
-          .withSupplyCurrentLimitEnable(true)
-          .withSupplyCurrentLowerLimit(kSupplyLimit)
-          .withSupplyCurrentLowerTime(0);
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(kStatorLimit)
+            .withSupplyCurrentLimit(kSupplyLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentLowerLimit(kSupplyLimit)
+            .withSupplyCurrentLowerTime(0);
 
     public static MotionMagicConfigs kMotionMagicConfig =
-        new MotionMagicConfigs()//TODO tune
+        new MotionMagicConfigs() // TODO tune
             .withMotionMagicCruiseVelocity(Units.degreesToRotations(800))
             .withMotionMagicAcceleration(Units.degreesToRotations(1200));
   }
