@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -173,21 +174,24 @@ public class Constants {
 
   public static class Elevator {
     public static double gearing = (5d / 1) * (66d / 22); // TODO: Verify
-    public static double maxHeight = Units.inchesToMeters(60); // TODO: Calculate
-    public static double minHeight = Units.inchesToMeters(0);
+    public static double sprocketPD = 0.25 / (Math.sin(Math.PI / 22)); // Inches
+    public static double maxHeight = Units.inchesToMeters(60); // Carriage Travel (Meters)
+    public static double minHeight = Units.inchesToMeters(0); // Carriage Travel (Meters)
     public static int stages = 3;
     public static double setpointTollerance = Units.inchesToMeters(1);
 
     public static Slot0Configs motorSlot0 = // TODO tune
         new Slot0Configs()
-            .withKS(0)
+            .withKS(0) // Volts
+            .withKG(0) // Volts
+            .withGravityType(GravityTypeValue.Elevator_Static)
             .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
             .withKP(70)
             .withKI(0)
             .withKD(0);
 
     public static final double kSupplyLimit = 40;
-    public static final double kStatorLimit = 70;
+    public static final double kStatorLimit = 60;
 
     public static final CurrentLimitsConfigs currentConfigs =
         new CurrentLimitsConfigs()
@@ -198,9 +202,13 @@ public class Constants {
             .withSupplyCurrentLowerLimit(kSupplyLimit)
             .withSupplyCurrentLowerTime(0);
 
+    // TODO: Tune, these values (should be) very slow.
+    public static double kMaxVelocity = 10; // Inches/s of Carriage Travel
+    public static double kMaxAcceleration = 5; // Inches/s/s of Carriage Travel
+
     public static MotionMagicConfigs kMotionMagicConfig =
-        new MotionMagicConfigs() // TODO tune
-            .withMotionMagicCruiseVelocity(Units.degreesToRotations(800))
-            .withMotionMagicAcceleration(Units.degreesToRotations(1200));
+        new MotionMagicConfigs()
+            .withMotionMagicCruiseVelocity((kMaxVelocity / stages) / sprocketPD)
+            .withMotionMagicAcceleration((kMaxAcceleration / stages) / sprocketPD);
   }
 }

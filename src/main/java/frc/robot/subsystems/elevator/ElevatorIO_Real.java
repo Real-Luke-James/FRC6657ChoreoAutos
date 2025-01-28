@@ -3,11 +3,13 @@ package frc.robot.subsystems.elevator;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
+import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIO_Real implements ElevatorIO {
 
@@ -17,6 +19,8 @@ public class ElevatorIO_Real implements ElevatorIO {
   private double kSetpoint = Constants.Elevator.minHeight;
   private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
+  private boolean useRawVoltage = true;
+
   public ElevatorIO_Real() {
 
     // Configure both motors
@@ -24,7 +28,7 @@ public class ElevatorIO_Real implements ElevatorIO {
     var followConfigurator = followMotor.getConfigurator();
     var motorConfigs = new TalonFXConfiguration();
     motorConfigs.Feedback.SensorToMechanismRatio =
-        1.0 / Constants.Elevator.gearing; // Sets default output to pivot rotations
+        1.0 / Constants.Elevator.gearing; // Sets default output to rotations
     motorConfigs.Slot0 = Constants.Elevator.motorSlot0; // PID Constants
     motorConfigs.CurrentLimits = Constants.Elevator.currentConfigs; // Current Limits
     // motorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;//TODO verify
@@ -38,33 +42,31 @@ public class ElevatorIO_Real implements ElevatorIO {
             false)); // Only difference with the follow motor configuration is this line
 
     // grab important numbers for logging
-    var motorPostition =
-        leaderMotor.getPosition(); // I don't think we need to track this for both motors
+    var motorPostition = leaderMotor.getPosition();
     var motorVelocity = leaderMotor.getVelocity();
-    // acceleration?
+    var motorAcceleration = leaderMotor.getAcceleration();
 
     var leaderMotorTemp = leaderMotor.getDeviceTemp();
     var followMotorTemp = followMotor.getDeviceTemp();
     var leaderMotorVoltage = leaderMotor.getMotorVoltage();
     var followMotorVoltage = followMotor.getMotorVoltage();
-    var leaderMotorCurrent =
-        leaderMotor
-            .getSupplyCurrent(); // Supply current, not stator current right? for auto logging
+    var leaderMotorCurrent = leaderMotor.getSupplyCurrent();
     var followMotorCurrent = followMotor.getSupplyCurrent();
 
     leaderMotorTemp.setUpdateFrequency(Constants.mainLoopFrequency / 4);
     followMotorTemp.setUpdateFrequency(Constants.mainLoopFrequency / 4);
     motorPostition.setUpdateFrequency(Constants.mainLoopFrequency);
     motorVelocity.setUpdateFrequency(Constants.mainLoopFrequency);
+    motorAcceleration.setUpdateFrequency(Constants.mainLoopFrequency);
     leaderMotorVoltage.setUpdateFrequency(Constants.mainLoopFrequency);
     followMotorVoltage.setUpdateFrequency(Constants.mainLoopFrequency);
     leaderMotorCurrent.setUpdateFrequency(Constants.mainLoopFrequency);
     followMotorCurrent.setUpdateFrequency(Constants.mainLoopFrequency);
 
-    var closedLoopReferenceSignal = leaderMotor.getClosedLoopReference(); // what does this do?
+    var closedLoopReferenceSignal = leaderMotor.getClosedLoopReference();
     closedLoopReferenceSignal.setUpdateFrequency(Constants.mainLoopFrequency);
 
-    // redices CAN bus usage
+    // reduces CAN bus usage
     leaderMotor.optimizeBusUtilization();
     followMotor.optimizeBusUtilization();
 
@@ -77,10 +79,18 @@ public class ElevatorIO_Real implements ElevatorIO {
     inputs.kPosition =
         Units.inchesToMeters(
             leaderMotor.getPosition().getValueAsDouble()
-                * 1.7567); // 1.7567 is the inch length a rotation yeilds
+                * Constants.Elevator.sprocketPD
+                * Constants.Elevator.stages);
     inputs.kVelocity =
-        Units.inchesToMeters(leaderMotor.getVelocity().getValueAsDouble() * 1.7567); // also here
-
+        Units.inchesToMeters(
+            leaderMotor.getVelocity().getValueAsDouble()
+                * Constants.Elevator.sprocketPD
+                * Constants.Elevator.stages);
+    inputs.kAcceleration =
+        Units.inchesToMeters(
+            leaderMotor.getAcceleration().getValueAsDouble()
+                * Constants.Elevator.sprocketPD
+                * Constants.Elevator.stages);
     inputs.leaderMotorTemp = leaderMotor.getDeviceTemp().getValueAsDouble();
     inputs.followMotorTemp = followMotor.getDeviceTemp().getValueAsDouble();
     inputs.leaderMotorCurrent = leaderMotor.getSupplyCurrent().getValueAsDouble();
@@ -88,11 +98,36 @@ public class ElevatorIO_Real implements ElevatorIO {
     inputs.leaderMotorVoltage = leaderMotor.getMotorVoltage().getValueAsDouble();
     inputs.followMotorVoltage = followMotor.getMotorVoltage().getValueAsDouble();
 
-    leaderMotor.setControl(motionMagicVoltage.withPosition(Units.degreesToRotations(Units.metersToInches(kSetpoint / 1.7567)))); // fix the unit conversion at some point, I am sure I made a mistake
+
+    if(!useRawVoltage){
+      //Stop if we are at 0
+      if(kSetpoint == Constants.Elevator.minHeight && Math.abs(inputs.kPosition - inputs.kSetpoint) < Constants.Elevator.setpointTollerance){
+        //leaderMotor.setControl(new VoltageOut(0));
+      }else{
+        //leaderMotor.setControl(motionMagicVoltage.withPosition(Units.metersToInches(kSetpoint / Constants.Elevator.stages) / Constants.Elevator.sprocketPD));
+      }
+      //followMotor.setControl(new Follower(CAN.Elevetor_Leader.id,false));
+
+      // Logging for motion magic internal variables for tuning purposes.
+      Logger.recordOutput("Elevator/MotionMagicPosition", motionMagicVoltage.Position);
+      Logger.recordOutput("Elevator/MotionMagicSetpoint", leaderMotor.getClosedLoopReference().getValueAsDouble());
+    }
   }
 
   @Override
   public void changeSetpoint(double setpoint) {
+
+    useRawVoltage = false;
+
     kSetpoint = setpoint;
+  }
+
+  @Override
+  public void setRawVoltage(double voltage) {
+
+    useRawVoltage = true;
+
+    leaderMotor.setControl(new VoltageOut(voltage));
+    followMotor.setControl(new Follower(CAN.Elevetor_Leader.id, false));
   }
 }
