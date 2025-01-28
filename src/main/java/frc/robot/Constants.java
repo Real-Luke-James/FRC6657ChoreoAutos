@@ -1,5 +1,9 @@
 package frc.robot;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
+import com.ctre.phoenix6.configs.Slot0Configs;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
@@ -30,7 +34,9 @@ public class Constants {
     Swerve_FR_E(10),
     Swerve_BL_E(11),
     Swerve_BR_E(12),
-    Gyro(13);
+    Gyro(13),
+    
+    OuttakeMotor(16);
 
     public int id;
 
@@ -164,6 +170,36 @@ public class Constants {
   public static class Intake {
     public static double gearing = (20d / 1) * (72d / 28); // TODO: Verify
     public static double maxAngle = Units.degreesToRadians(117);
+  }
+
+  public static class Outtake {
+    public static double gearing = 1.0; // TODO: Verify
+    //public static double setpointTollerance = 1; // We want this? what unit?
+
+    public static Slot0Configs motorSlot0 = // TODO tune
+        new Slot0Configs()
+            .withKS(0)
+            .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
+            .withKP(70)
+            .withKI(0)
+            .withKD(0);
+
+    public static final double kSupplyLimit = 30; // Slightly slower than the elevator limits, but still placeholder
+    public static final double kStatorLimit = 60;
+
+    public static final CurrentLimitsConfigs currentConfigs =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(kStatorLimit)
+            .withSupplyCurrentLimit(kSupplyLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentLowerLimit(kSupplyLimit)
+            .withSupplyCurrentLowerTime(0);
+
+    public static MotionMagicConfigs kMotionMagicConfig =
+        new MotionMagicConfigs() // TODO tune
+            .withMotionMagicCruiseVelocity(Units.degreesToRotations(1200))
+            .withMotionMagicAcceleration(Units.degreesToRotations(1800));
   }
 
   public static class Elevator {
