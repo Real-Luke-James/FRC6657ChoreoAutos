@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.util.Units;
@@ -14,6 +15,7 @@ public class ElevatorIO_Real implements ElevatorIO {
   TalonFX followMotor = new TalonFX(CAN.Elevator_Follower.id);
 
   private double kSetpoint = Constants.Elevator.minHeight;
+  private MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
   public ElevatorIO_Real() {
 
@@ -85,7 +87,9 @@ public class ElevatorIO_Real implements ElevatorIO {
     inputs.followMotorCurrent = followMotor.getSupplyCurrent().getValueAsDouble();
     inputs.leaderMotorVoltage = leaderMotor.getMotorVoltage().getValueAsDouble();
     inputs.followMotorVoltage = followMotor.getMotorVoltage().getValueAsDouble();
-  } // 22/4/pi
+
+    leaderMotor.setControl(motionMagicVoltage.withPosition(Units.degreesToRotations(Units.metersToInches(kSetpoint / 1.7567)))); // fix the unit conversion at some point, I am sure I made a mistake
+  }
 
   @Override
   public void changeSetpoint(double setpoint) {
