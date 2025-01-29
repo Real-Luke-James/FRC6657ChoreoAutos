@@ -9,21 +9,20 @@ public interface ElevatorIO {
     public double kSetpoint = 0.0; // Meters
     public double kPosition = 0.0; // Meters
     public double kVelocity = 0.0; // Meters per second
+    public double kAcceleration = 0.0; // Meters per second per second.
 
     public double leaderMotorTemp = 0.0; // Celcius
     public double leaderMotorVoltage = 0.0; // Volts
     public double leaderMotorCurrent = 0.0; // Amps
-    // public double leaderMotorVelocity = 0.0;
 
     public double followMotorTemp = 0.0; // Celcius
     public double followMotorVoltage = 0.0; // Volts
     public double followMotorCurrent = 0.0; // Amps
-    // public double followMotorVelocity = 0.0; //I don't think we need to track velocity for both
-    // motors
-
   }
 
   public default void updateInputs(ElevatorIOInputs inputs) {}
 
   public default void changeSetpoint(double setpoint) {}
+
+  public default void setRawVoltage(double voltage) {} // TODO: Remove after tuning kS and kG.
 }

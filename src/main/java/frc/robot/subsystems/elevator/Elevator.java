@@ -1,9 +1,12 @@
 package frc.robot.subsystems.elevator;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
 
@@ -16,17 +19,34 @@ public class Elevator extends SubsystemBase {
 
   public Pose3d[] get3DPoses() {
     return new Pose3d[] {
-      new Pose3d(0, 0, 0 * (1d / 3), new Rotation3d()),
-      new Pose3d(0, 0, 0 * (2d / 3), new Rotation3d()),
-      new Pose3d(0, 0, 0 * (3d / 3), new Rotation3d()),
+      new Pose3d(0, 0, inputs.kPosition * (1d / 3), new Rotation3d()),
+      new Pose3d(0, 0, inputs.kPosition * (2d / 3), new Rotation3d()),
+      new Pose3d(0, 0, inputs.kPosition * (3d / 3), new Rotation3d()),
     };
   }
-  
-  public Command changeElevatorSetpoint(double setpoint) {
+
+  /**
+   * @param setpoint in Carriage Meters
+   * @return
+   */
+  public Command changeSetpoint(double setpoint) {
     return this.runOnce(
-      () -> {
-        io.changeSetpoint(setpoint);
-      }
-    );
+        () -> {
+          io.changeSetpoint(
+              MathUtil.clamp(setpoint, Constants.Elevator.minHeight, Constants.Elevator.maxHeight));
+        });
+  }
+
+  public Command setRawVoltage(double voltage) {
+    return this.runOnce(
+        () -> {
+          io.setRawVoltage(voltage);
+        });
+  }
+
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Elevator/", inputs);
   }
 }
