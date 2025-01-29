@@ -5,7 +5,10 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
 
@@ -61,7 +64,7 @@ public class ElevatorIO_Real implements ElevatorIO {
     leaderMotorCurrent.setUpdateFrequency(Constants.mainLoopFrequency);
     followMotorCurrent.setUpdateFrequency(Constants.mainLoopFrequency);
 
-    var closedLoopReferenceSignal = leaderMotor.getClosedLoopReference(); // what does this do?
+    var closedLoopReferenceSignal = leaderMotor.getClosedLoopReference();
     closedLoopReferenceSignal.setUpdateFrequency(Constants.mainLoopFrequency);
 
     // redices CAN bus usage
@@ -93,6 +96,6 @@ public class ElevatorIO_Real implements ElevatorIO {
 
   @Override
   public void changeSetpoint(double setpoint) {
-    kSetpoint = setpoint;
+    kSetpoint = MathUtil.clamp(Units.inchesToMeters(setpoint), Constants.Elevator.minHeight, Constants.Elevator.maxHeight);
   }
 }
