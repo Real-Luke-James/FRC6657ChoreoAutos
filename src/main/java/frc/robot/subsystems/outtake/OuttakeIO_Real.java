@@ -14,7 +14,7 @@ public class OuttakeIO_Real implements OuttakeIO {
 
   DigitalInput beambreak = new DigitalInput(7); // Placeholder port number
   
-  private double rpmSetpoint = 0;
+  private double rollerSetpoint = 0;
 
   public OuttakeIO_Real() {
 
@@ -29,9 +29,26 @@ public class OuttakeIO_Real implements OuttakeIO {
     motorConfigs.MotionMagic = Constants.Outtake.kMotionMagicConfig;
     motorConfigurator.apply(motorConfigs); // Configure leader motor
 
-    
+    var kTemp = rollerMotor.getDeviceTemp();
+    var kVoltage = rollerMotor.getMotorVoltage();
+    var kCurrent = rollerMotor.getSupplyCurrent();
+
+    kTemp.setUpdateFrequency(Constants.mainLoopFrequency/4);
+    kVoltage.setUpdateFrequency(Constants.mainLoopFrequency);
+    kCurrent.setUpdateFrequency(Constants.mainLoopFrequency);
+
+    rollerMotor.optimizeBusUtilization(); // Reduces CAN BUS usage
+
+    changeSetpoint(0);
   }
 
   @Override
-  public void changeSetpoint(double setpoint) {}
+  public void updateInputs(OuttakeIOInputs inputs){
+
+  }
+
+  @Override
+  public void changeSetpoint(double setpoint) {
+    rollerSetpoint = setpoint; // add clamps?
+  }
 }
