@@ -1,6 +1,7 @@
 package frc.robot.subsystems.outtake;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -44,7 +45,15 @@ public class OuttakeIO_Real implements OuttakeIO {
 
   @Override
   public void updateInputs(OuttakeIOInputs inputs){
+    inputs.beamBroken = beambreak.get();
 
+    inputs.kTemp = rollerMotor.getDeviceTemp().getValueAsDouble();
+    inputs.kCurrent = rollerMotor.getSupplyCurrent().getValueAsDouble();
+    inputs.kVoltage = rollerMotor.getMotorVoltage().getValueAsDouble();
+
+    inputs.kSetpoint = rollerSetpoint;
+
+    rollerMotor.setControl(new VoltageOut(rollerSetpoint));
   }
 
   @Override
