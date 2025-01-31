@@ -44,6 +44,10 @@ public class Elevator extends SubsystemBase {
         });
   }
 
+  public double position(){
+    return inputs.kPosition;
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);
