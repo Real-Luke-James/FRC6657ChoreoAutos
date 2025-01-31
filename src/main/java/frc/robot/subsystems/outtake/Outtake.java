@@ -18,4 +18,9 @@ public class Outtake extends SubsystemBase {
         io.changeSetpoint(setpoint);
       });
   }
+
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+  }
 }
