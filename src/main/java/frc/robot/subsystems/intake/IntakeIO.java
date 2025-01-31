@@ -19,6 +19,7 @@ public interface IntakeIO {
     public double rollerMotorTemp = 0.0; // Celcius
     public double rollerMotorVoltage = 0.0; // Volts
     public double rollerMotorCurrent = 0.0; // Amps
+    public double rollerMotorSetpoint = 0.0; // -1 to 1
 
     //public double tofDistance = 0;
     //public boolean tofUnplugged = false;

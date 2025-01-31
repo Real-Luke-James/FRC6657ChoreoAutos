@@ -109,7 +109,7 @@ public class IntakeIO_Real implements IntakeIO {
     inputs.pivotMotorTemp = pivotMotor.getDeviceTemp().getValueAsDouble(); // Celcius
     inputs.pivotMotorVoltage = pivotMotor.getMotorVoltage().getValueAsDouble(); // Volts
     inputs.pivotMotorCurrent = pivotMotor.getSupplyCurrent().getValueAsDouble(); // Amps
-    inputs.atSetpoint = MathUtil.isNear(angleSetpoint, inputs.pivotMotorPosition, 2);
+    inputs.atSetpoint = MathUtil.isNear(angleSetpoint, inputs.pivotMotorPosition, Constants.Intake.pivotAtSetpointTolerance);
     inputs.pivotMotorSetpoint = angleSetpoint;
 
     // Update the roller inputs
@@ -117,6 +117,7 @@ public class IntakeIO_Real implements IntakeIO {
     inputs.rollerMotorTemp = rollerMotor.getDeviceTemp().getValueAsDouble(); // Celcius
     inputs.rollerMotorVoltage = rollerMotor.getMotorVoltage().getValueAsDouble(); // Volts
     inputs.rollerMotorCurrent = rollerMotor.getSupplyCurrent().getValueAsDouble(); // Amps
+    inputs.rollerMotorSetpoint = speedSetpoint;
 
     rollerMotor.setControl(rollerSetpoint.withOutput(speedSetpoint));
     pivotMotor.setControl(
@@ -143,8 +144,12 @@ public class IntakeIO_Real implements IntakeIO {
   }
 
   @Override
-  public void changePivotSetpoint(double setpoint) {}
+  public void changePivotSetpoint(double setpoint) {
+    angleSetpoint = setpoint;
+  }
 
   @Override
-  public void changeRollerSpeed(double speed) {}
+  public void changeRollerSpeed(double speed) {
+    speedSetpoint = speed;
+  }
 }
