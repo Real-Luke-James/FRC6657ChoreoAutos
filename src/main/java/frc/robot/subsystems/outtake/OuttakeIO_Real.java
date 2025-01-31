@@ -45,7 +45,7 @@ public class OuttakeIO_Real implements OuttakeIO {
 
   @Override
   public void updateInputs(OuttakeIOInputs inputs){
-    inputs.beamBroken = beambreak.get();
+    inputs.beamBroken = !beambreak.get(); // verify negation
 
     inputs.kTemp = rollerMotor.getDeviceTemp().getValueAsDouble();
     inputs.kCurrent = rollerMotor.getSupplyCurrent().getValueAsDouble();
