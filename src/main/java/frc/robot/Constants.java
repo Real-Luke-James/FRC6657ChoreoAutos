@@ -36,7 +36,8 @@ public class Constants {
     Swerve_BR_E(12),
     Gyro(13),
     IntakePivot(19),
-    IntakeRoller(20);
+    IntakeRoller(20),
+    IntakeEncoder(21);
 
     public int id;
 

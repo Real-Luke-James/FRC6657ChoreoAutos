@@ -21,6 +21,10 @@ public interface IntakeIO {
     public double rollerMotorCurrent = 0.0; // Amps
     public double rollerMotorSetpoint = 0.0; // -1 to 1
 
+    public double encoderAbsPosition = 0.0; // Rad
+    public double encoderRelPosition = 0.0; // Rad
+    public double encoderVelocity = 0.0; // Rad/s
+
     //public double tofDistance = 0;
     //public boolean tofUnplugged = false;
   }

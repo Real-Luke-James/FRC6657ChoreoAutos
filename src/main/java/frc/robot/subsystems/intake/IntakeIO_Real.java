@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.reduxrobotics.sensors.canandmag.Canandmag;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
@@ -21,6 +22,9 @@ public class IntakeIO_Real implements IntakeIO {
   // Roller Motor Controller
   TalonFX rollerMotor = new TalonFX(Constants.CAN.IntakeRoller.id);
 
+  // Absolute Encoder
+  private Canandmag encoder;
+
   // Variables to store/log the setpoints
   @AutoLogOutput(key = "Intake/Angle Setpoint")
   private double angleSetpoint = Constants.Intake.maxAngle;
@@ -32,6 +36,8 @@ public class IntakeIO_Real implements IntakeIO {
   private MotionMagicVoltage pivotSetpoint = new MotionMagicVoltage(Constants.Intake.maxAngle);
 
   public IntakeIO_Real() {
+    encoder = new Canandmag(Constants.CAN.IntakeEncoder.id); 
+
     // Configure the pivot motor
     var pivotConfigurator = pivotMotor.getConfigurator();
     var pivotConfigs = new TalonFXConfiguration();
@@ -141,6 +147,10 @@ public class IntakeIO_Real implements IntakeIO {
       inputs.tofUnplugged = true;
     }
     */
+
+    inputs.encoderAbsPosition = encoder.getAbsPosition() * 2 * Math.PI;
+    inputs.encoderRelPosition = encoder.getPosition() * 2 * Math.PI;
+    inputs.encoderVelocity = encoder.getVelocity() * 2 * Math.PI;
   }
 
   @Override
