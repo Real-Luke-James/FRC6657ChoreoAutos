@@ -9,7 +9,7 @@ public interface OuttakeIO {
     public boolean beamBroken = false;
 
     public double kSetpoint = 0.0;
-    //public double kVelocity = 0.0; // should not be needed
+    public double kVelocity = 0.0; // should not be needed (currently enabled for sim)
     public double kTemp = 0.0;
     public double kVoltage = 0.0;
     public double kCurrent = 0.0;
