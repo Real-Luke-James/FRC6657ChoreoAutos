@@ -2,14 +2,22 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
 import frc.robot.Constants;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public class IntakeIO_Real implements IntakeIO {
 
+  // Pivot Motor Controller
   private SparkMax pivotMotor;
+
+  // Roller Motor Controller
+  TalonFX rollerMotor = new TalonFX(Constants.CAN.IntakeRoller.id);
 
   // Absolute Encoder
   private Canandmag encoder;
@@ -25,6 +33,8 @@ public class IntakeIO_Real implements IntakeIO {
   private MotionMagicVoltage pivotSetpoint = new MotionMagicVoltage(Constants.Intake.maxAngle);
 
   public IntakeIO_Real() {
+
+    pivotMotor = new SparkMax(Constants.CAN.IntakePivot.id, MotorType.kBrushless);
     encoder = new Canandmag(Constants.CAN.IntakeEncoder.id);
 
     // Feed the PID with default values
