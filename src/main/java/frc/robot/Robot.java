@@ -6,18 +6,29 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Swerve.ModuleInformation;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drivebase.GyroIO;
 import frc.robot.subsystems.drivebase.GyroIO_Real;
 import frc.robot.subsystems.drivebase.ModuleIO;
 import frc.robot.subsystems.drivebase.ModuleIO_Real;
 import frc.robot.subsystems.drivebase.ModuleIO_Sim;
 import frc.robot.subsystems.drivebase.Swerve;
+import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.elevator.ElevatorIO_Real;
+import frc.robot.subsystems.elevator.ElevatorIO_Sim;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO_Real;
+import frc.robot.subsystems.intake.IntakeIO_Sim;
+import frc.robot.subsystems.outtake.Outtake;
+import frc.robot.subsystems.outtake.OuttakeIO_Real;
+import frc.robot.subsystems.outtake.OuttakeIO_Sim;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -29,13 +40,13 @@ public class Robot extends LoggedRobot {
 
   private Swerve drivebase;
 
-  // private Intake intake;
-  // private Elevator elevator;
-  // private Outtake outtake;
+  private Intake intake;
+  private Elevator elevator;
+  private Outtake outtake;
 
   // private ApriltagCamera[] cameras;
 
-  // private Superstructure superstructure;
+  private Superstructure superstructure;
 
   // private final AutoFactory autoFactory;
 
@@ -58,9 +69,9 @@ public class Robot extends LoggedRobot {
                 },
             RobotBase.isReal() ? new GyroIO_Real() : new GyroIO() {});
 
-    // intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
-    // elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
-    // outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
+    intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
+    elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
+    outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
 
     // cameras =
     //     new ApriltagCamera[] {
@@ -71,7 +82,7 @@ public class Robot extends LoggedRobot {
     //           VisionConstants.cameraInfo)
     //     };
 
-    // superstructure = new Superstructure(drivebase, intake, elevator, outtake);
+    superstructure = new Superstructure(drivebase, intake, elevator, outtake);
 
     // autoFactory =
     //     new AutoFactory(
@@ -105,6 +116,12 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 2,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 2)));
 
+    driver
+        .a()
+        .onTrue(elevator.changeSetpoint(Units.inchesToMeters(60)))
+        .onFalse(elevator.changeSetpoint(Units.inchesToMeters(0)));
+    ;
+
     Logger.start();
   }
 
@@ -119,7 +136,7 @@ public class Robot extends LoggedRobot {
     //       camera.getEstimatedPose(), camera.getLatestTimestamp(), camera.getLatestStdDevs());
     // }
 
-    // superstructure.update3DPose();
+    superstructure.update3DPose();
 
     // Logger.recordOutput(
     //     "ReefCam Pose",
