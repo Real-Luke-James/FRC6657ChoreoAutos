@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
 import frc.robot.Constants.Motors;
 import frc.robot.Constants.Swerve;
@@ -67,11 +68,10 @@ public class ModuleIO_Real implements ModuleIO {
     driveConfig.CurrentLimits.SupplyCurrentLimit = 65;
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.Feedback.SensorToMechanismRatio = Swerve.DriveGearing.L3.reduction;
-    driveConfig.Slot0.kS = 0; // TODO Tune
+    driveConfig.Slot0.kS = 1; // TODO Tune
     driveConfig.Slot0.kA = 0; // TODO Tune
-    driveConfig.Slot0.kV =
-        (12d / (Motors.FalconRPS * Swerve.DriveGearing.L3.reduction)); // TODO Verify
-    driveConfig.Slot0.kP = 0; // TODO Tune
+    driveConfig.Slot0.kV = (12d / (Motors.FalconRPS * Swerve.DriveGearing.L3.reduction));
+    driveConfig.Slot0.kP = 2.25; // TODO Tune
     driveConfig.Slot0.kD = 0; // TODO Tune
 
     drive.getConfigurator().apply(driveConfig);
@@ -106,7 +106,7 @@ public class ModuleIO_Real implements ModuleIO {
     turnConfig.Slot0.kS = 0; // TODO Tune
     turnConfig.Slot0.kA = 0; // TODO Tune;
     turnConfig.Slot0.kV = (12d / (Motors.FalconRPS * Swerve.TurnGearing)); // TODO Verify
-    turnConfig.Slot0.kP = 0; // TODO Tune
+    turnConfig.Slot0.kP = 150; // TODO Tune
     turnConfig.Slot0.kD = 0; // TODO Tune
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
@@ -137,7 +137,7 @@ public class ModuleIO_Real implements ModuleIO {
   @Override
   public void updateInputs(ModuleIOInputs inputs) {
 
-    inputs.driveApplied = driveApplied.getValueAsDouble();
+    inputs.driveApplied = drive.get() * RobotController.getBatteryVoltage();
     inputs.driveStatorCurrent = driveStatorCurrent.getValueAsDouble();
     inputs.driveSupplyCurrent = driveSupplyCurrent.getValueAsDouble();
     inputs.drivePosition = drivePosition.getValueAsDouble() * Swerve.WheelDiameter * Math.PI;
@@ -180,6 +180,6 @@ public class ModuleIO_Real implements ModuleIO {
   public SwerveModuleState getModuleState() {
     return new SwerveModuleState(
         drive.getVelocity().getValueAsDouble() * Swerve.WheelDiameter * Math.PI,
-        new Rotation2d(turn.getVelocity().getValueAsDouble() * 2 * Math.PI));
+        new Rotation2d(turn.getPosition().getValueAsDouble() * 2 * Math.PI));
   }
 }
