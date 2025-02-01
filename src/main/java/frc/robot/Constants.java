@@ -173,7 +173,7 @@ public class Constants {
   }
 
   public static class Outtake {
-    public static double gearing = 1.0; // TODO: Verify
+    public static double gearing = 11.0 / 24.0; // we don't need it, but here it is
     //public static double setpointTollerance = 1; // We want this? what unit?
 
     public static Slot0Configs motorSlot0 = // TODO tune
