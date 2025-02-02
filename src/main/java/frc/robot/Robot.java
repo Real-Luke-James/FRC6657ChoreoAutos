@@ -96,7 +96,12 @@ public class Robot extends LoggedRobot {
                 drivebase::followTrajectory,
                 true,
                 drivebase)
-            .bind("nothing", Commands.none());
+            .bind(
+              "ReefAlginLeft", 
+              Commands.sequence(
+                Commands.runOnce(() -> superstructure.selectReef("Left")),
+                drivebase.goToPose(() -> superstructure.getNearestReef())
+              ));
   }
 
   @SuppressWarnings("resource")
@@ -121,6 +126,16 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 7)));
 
+    driver.a().whileTrue(
+      drivebase.goToPose(
+        () -> superstructure.getNearestReef()
+      ).andThen(
+      )
+    );
+
+    driver.povLeft().onTrue(Commands.runOnce(() -> superstructure.selectReef("Left")));
+    driver.povRight().onTrue(Commands.runOnce(() -> superstructure.selectReef("Right")));
+
     Logger.start();
   }
 
@@ -140,6 +155,8 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput(
         "ReefCam Pose",
         new Pose3d(drivebase.getPose()).transformBy(VisionConstants.cameraInfo.robotToCamera));
+
+    Logger.recordOutput("AutoAlignPos", superstructure.getNearestReef());
 
     CommandScheduler.getInstance().run();
   }

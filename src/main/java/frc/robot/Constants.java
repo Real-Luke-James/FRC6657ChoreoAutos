@@ -3,8 +3,10 @@ package frc.robot;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -36,6 +38,58 @@ public class Constants {
 
     CAN(int id) {
       this.id = id;
+    }
+  }
+
+  public static class FieldConstants {
+
+    private static Pose2d getRedReefPose(Pose2d reefPose) {
+      return new Pose2d(
+          reefPose.getTranslation().getX() + 8.565,
+          reefPose.getTranslation().getY(),
+          reefPose.getRotation());
+    }
+
+    public static class ReefSlot {
+      public Pose2d middle;
+      public Pose2d left;
+      public Pose2d right;
+
+      ReefSlot(Pose2d middle, Pose2d left, Pose2d right) {
+        this.middle = middle;
+        this.left = left;
+        this.right = right;
+      }
+    }
+
+    public static enum ReefPoses {
+      Reef_1(new Pose2d(5.825, 4.03, Rotation2d.fromDegrees(0))),
+      Reef_2(new Pose2d(5.163, 5.177484, Rotation2d.fromDegrees(60))),
+      Reef_3(new Pose2d(3.838, 5.177484, Rotation2d.fromDegrees(120))),
+      Reef_4(new Pose2d(3.175, 4.03, Rotation2d.fromDegrees(180))),
+      Reef_5(new Pose2d(3.8375, 2.882516, Rotation2d.fromDegrees(-120))),
+      Reef_6(new Pose2d(5.1625, 2.882516, Rotation2d.fromDegrees(-60)));
+
+      public ReefSlot blue;
+      public ReefSlot red;
+
+      // Shift the pose to the robot's left
+      public Pose2d getLeftPose(Pose2d pose) {
+        return pose.transformBy(new Transform2d(0, -0.26, new Rotation2d()));
+      }
+
+      public Pose2d getRightPose(Pose2d pose) {
+        return pose.transformBy(new Transform2d(0, 0.06, new Rotation2d()));
+      }
+
+      ReefPoses(Pose2d pose) {
+        this.blue = new ReefSlot(pose, getLeftPose(pose), getRightPose(pose));
+        this.red =
+            new ReefSlot(
+                getRedReefPose(pose),
+                getRedReefPose(getLeftPose(pose)),
+                getRedReefPose(getRightPose(pose)));
+      }
     }
   }
 
