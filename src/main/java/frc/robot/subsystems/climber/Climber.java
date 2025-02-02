@@ -4,14 +4,31 @@
 
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climber extends SubsystemBase {
 
   public final ClimberIO io;
+  public final ClimberIOInputsAutoLogged inputs = new ClimberIOInputsAutoLogged();
 
-  public Climber() {
-  
+  public Climber(IntakeIO io) {
+    this.io = io;
+  }
+
+  public Command changeSetpoint(double angleDegrees) {
+    return this.runOnce(
+      () ->
+          io.changeSetpoint(
+            MathUtil.clamp(
+                angleDegrees, Constants.Climber.minAngle, Constants.Climber.maxAngle)
+          ) 
+    );
+  }
+
+  public boolean atSetpoint() {
+    return inputs.atSetpoint;
   }
 
   @Override
