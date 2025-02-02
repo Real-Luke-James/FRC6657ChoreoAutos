@@ -118,8 +118,9 @@ public class Robot extends LoggedRobot {
 
     driver
         .a()
-        .onTrue(elevator.changeSetpoint(Units.inchesToMeters(60)))
+        .onTrue(elevator.changeSetpoint(Units.inchesToMeters(40)))
         .onFalse(elevator.changeSetpoint(Units.inchesToMeters(0)));
+    driver.b().onTrue(elevator.setRawVoltage(0));
     ;
 
     Logger.start();

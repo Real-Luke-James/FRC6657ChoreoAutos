@@ -44,7 +44,7 @@ public class Elevator extends SubsystemBase {
         });
   }
 
-  public double position(){
+  public double position() {
     return inputs.kPosition;
   }
 

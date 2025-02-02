@@ -6,10 +6,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
+import edu.wpi.first.wpilibj.RobotController;
 import frc.robot.Constants;
 import frc.robot.Constants.CAN;
 import org.littletonrobotics.junction.Logger;
@@ -31,7 +29,7 @@ public class ElevatorIO_Real implements ElevatorIO {
     var followConfigurator = followMotor.getConfigurator();
     var motorConfigs = new TalonFXConfiguration();
     motorConfigs.Feedback.SensorToMechanismRatio =
-        1.0 / Constants.Elevator.gearing; // Sets default output to rotations
+        Constants.Elevator.gearing; // Sets default output to rotations
     motorConfigs.Slot0 = Constants.Elevator.motorSlot0; // PID Constants
     motorConfigs.CurrentLimits = Constants.Elevator.currentConfigs; // Current Limits
     // motorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;//TODO verify
@@ -73,6 +71,8 @@ public class ElevatorIO_Real implements ElevatorIO {
     leaderMotor.optimizeBusUtilization();
     followMotor.optimizeBusUtilization();
 
+    leaderMotor.setPosition(0);
+
     changeSetpoint(Constants.Elevator.minHeight);
   }
 
@@ -83,53 +83,58 @@ public class ElevatorIO_Real implements ElevatorIO {
         Units.inchesToMeters(
             leaderMotor.getPosition().getValueAsDouble()
                 * Constants.Elevator.sprocketPD
-                * Constants.Elevator.stages);
+                * Constants.Elevator.stages
+                * Math.PI);
     inputs.kVelocity =
         Units.inchesToMeters(
             leaderMotor.getVelocity().getValueAsDouble()
                 * Constants.Elevator.sprocketPD
-                * Constants.Elevator.stages);
+                * Constants.Elevator.stages
+                * Math.PI);
     inputs.kAcceleration =
         Units.inchesToMeters(
             leaderMotor.getAcceleration().getValueAsDouble()
                 * Constants.Elevator.sprocketPD
-                * Constants.Elevator.stages);
+                * Constants.Elevator.stages
+                * Math.PI);
     inputs.leaderMotorTemp = leaderMotor.getDeviceTemp().getValueAsDouble();
     inputs.followMotorTemp = followMotor.getDeviceTemp().getValueAsDouble();
     inputs.leaderMotorCurrent = leaderMotor.getSupplyCurrent().getValueAsDouble();
     inputs.followMotorCurrent = followMotor.getSupplyCurrent().getValueAsDouble();
-    inputs.leaderMotorVoltage = leaderMotor.getMotorVoltage().getValueAsDouble();
+    inputs.leaderMotorVoltage = leaderMotor.get() * RobotController.getBatteryVoltage();
     inputs.followMotorVoltage = followMotor.getMotorVoltage().getValueAsDouble();
 
-
-    if(!useRawVoltage){
-      //Stop if we are at 0
-      if(kSetpoint == Constants.Elevator.minHeight && Math.abs(inputs.kPosition - inputs.kSetpoint) < Constants.Elevator.setpointTollerance){
-        //leaderMotor.setControl(new VoltageOut(0));
-      }else{
-        //leaderMotor.setControl(motionMagicVoltage.withPosition(Units.metersToInches(kSetpoint / Constants.Elevator.stages) / Constants.Elevator.sprocketPD));
+    if (!useRawVoltage) {
+      // Stop if we are at 0
+      if (kSetpoint == Constants.Elevator.minHeight
+          && Math.abs(inputs.kPosition - inputs.kSetpoint)
+              < Constants.Elevator.setpointTollerance) {
+        leaderMotor.setControl(new VoltageOut(0));
+      } else {
+        leaderMotor.setControl(
+            motionMagicVoltage.withPosition(
+                Units.metersToInches(kSetpoint / Constants.Elevator.stages)
+                    / (Constants.Elevator.sprocketPD * Math.PI)));
       }
-      //followMotor.setControl(new Follower(CAN.Elevetor_Leader.id,false));
+
+      followMotor.setControl(new Follower(CAN.Elevetor_Leader.id, false));
 
       // Logging for motion magic internal variables for tuning purposes.
       Logger.recordOutput("Elevator/MotionMagicPosition", motionMagicVoltage.Position);
-      Logger.recordOutput("Elevator/MotionMagicSetpoint", leaderMotor.getClosedLoopReference().getValueAsDouble());
+      Logger.recordOutput(
+          "Elevator/MotionMagicSetpoint", leaderMotor.getClosedLoopReference().getValueAsDouble());
     }
   }
 
   @Override
   public void changeSetpoint(double setpoint) {
-
     useRawVoltage = false;
-
     kSetpoint = setpoint;
   }
 
   @Override
   public void setRawVoltage(double voltage) {
-
     useRawVoltage = true;
-
     leaderMotor.setControl(new VoltageOut(voltage));
     followMotor.setControl(new Follower(CAN.Elevetor_Leader.id, false));
   }
