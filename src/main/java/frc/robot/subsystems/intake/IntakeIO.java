@@ -25,8 +25,8 @@ public interface IntakeIO {
     public double encoderRelPosition = 0.0; // Rad
     public double encoderVelocity = 0.0; // Rad/s
 
-    //public double tofDistance = 0;
-    //public boolean tofUnplugged = false;
+    // public double tofDistance = 0;
+    // public boolean tofUnplugged = false;
   }
 
   public default void updateInputs(IntakeIOInputs inputs) {}

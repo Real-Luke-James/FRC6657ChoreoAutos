@@ -7,6 +7,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants.ReefSlot;
 import frc.robot.subsystems.drivebase.Swerve;
@@ -93,26 +95,79 @@ public class Superstructure {
     selectedReef = reef;
   }
 
+
+  public Command ReefAlginLeft() {
+    return Commands.sequence(
+        Commands.runOnce(() -> selectReef("Left")),
+        drivebase.goToPose(() -> getNearestReef()));
+  }
+
+  public Command ReefAlginRight() {
+    return Commands.sequence(
+        Commands.runOnce(() -> selectReef("Right")),
+        drivebase.goToPose(() -> getNearestReef()));
+  }
+
+  public Command ElevatorL4() {
+    return Commands.sequence(
+        elevator.changeSetpoint(58),
+        Commands.waitUntil(elevator::atSetpoint));
+  }
+
+  public Command ScoreCoral() {
+    return Commands.sequence(
+        Commands.print("Score Coral"),
+        Commands.waitSeconds(0.25),
+        elevator.changeSetpoint(0),
+        Commands.waitUntil(elevator::atSetpoint));
+  }
+
+  public Command ScoreL4(){
+    return Commands.sequence(
+        elevator.changeSetpoint(58),
+        Commands.waitUntil(elevator::atSetpoint),
+        //Outtake Here
+        Commands.waitSeconds(0.5),
+        elevator.changeSetpoint(0),
+        Commands.waitUntil(elevator::atSetpoint)
+    );
+  }
+
   // Simple Test Auto that just runs a path.
   public AutoRoutine testAuto(AutoFactory factory) {
 
     final AutoRoutine routine = factory.newRoutine("Test");
 
-    final AutoTrajectory testPath = routine.trajectory("Test 3 Piece");
+    final AutoTrajectory S_P1 = routine.trajectory("Test 3 Piece", 0);
+    final AutoTrajectory P1_I1 = routine.trajectory("Test 3 Piece", 1);
+    final AutoTrajectory I1_P2 = routine.trajectory("Test 3 Piece", 2);
+    final AutoTrajectory P2_I2 = routine.trajectory("Test 3 Piece", 3);
+    final AutoTrajectory I2_P3 = routine.trajectory("Test 3 Piece", 4);
 
-    routine
-        .active()
-        .onTrue(
+    routine.active().onTrue(
             drivebase
                 .resetOdometry(
-                    testPath
+                    S_P1
                         .getInitialPose()
                         .orElseGet(
                             () -> {
                               routine.kill();
                               return new Pose2d();
-                            }))
-                .andThen(testPath.cmd()));
+                            })).andThen(Commands.sequence(
+                              S_P1.cmd(),
+                              ReefAlginLeft(),
+                              ScoreL4(),
+                              P1_I1.cmd(),
+                              //Wait for coral
+                              I1_P2.cmd(),
+                              ReefAlginLeft(),
+                              ScoreL4(),
+                              P2_I2.cmd(),
+                              //Wait for coral
+                              I2_P3.cmd(),
+                              ReefAlginRight(),
+                              ScoreL4()
+                            )));
 
     return routine;
   }

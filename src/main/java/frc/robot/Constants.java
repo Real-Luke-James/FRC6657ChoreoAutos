@@ -38,7 +38,7 @@ public class Constants {
     Swerve_BR_E(12),
     Gyro(13),
     Elevetor_Leader(15),
-    Elevator_Follower(16);
+    Elevator_Follower(16),
     IntakePivot(19),
     IntakeRoller(20),
     IntakeEncoder(21);
@@ -244,7 +244,7 @@ public class Constants {
         new Slot0Configs()
             .withKS(0)
             .withKV(12d / ((6380d / 60) * pivotGearing)) // Volts/Mechanism RPS
-            .withKP(70)// TODO Tune
+            .withKP(70) // TODO Tune
             .withKI(0)
             .withKD(0);
 

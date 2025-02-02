@@ -4,15 +4,19 @@
 
 package frc.robot;
 
+import choreo.auto.AutoFactory;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Swerve.ModuleInformation;
+import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drivebase.GyroIO;
 import frc.robot.subsystems.drivebase.GyroIO_Real;
@@ -48,7 +52,7 @@ public class Robot extends LoggedRobot {
 
   private Superstructure superstructure;
 
-  // private final AutoFactory autoFactory;
+  private final AutoFactory autoFactory;
 
   public Robot() {
 
@@ -90,13 +94,7 @@ public class Robot extends LoggedRobot {
                 drivebase::resetOdometry,
                 drivebase::followTrajectory,
                 true,
-                drivebase)
-            .bind(
-              "ReefAlginLeft", 
-              Commands.sequence(
-                Commands.runOnce(() -> superstructure.selectReef("Left")),
-                drivebase.goToPose(() -> superstructure.getNearestReef())
-              ));
+                drivebase);
   }
 
   @SuppressWarnings("resource")
@@ -121,12 +119,7 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 7)));
 
-    driver.a().whileTrue(
-      drivebase.goToPose(
-        () -> superstructure.getNearestReef()
-      ).andThen(
-      )
-    );
+    // driver.a().whileTrue(drivebase.goToPose(() -> superstructure.getNearestReef()));
 
     driver.povLeft().onTrue(Commands.runOnce(() -> superstructure.selectReef("Left")));
     driver.povRight().onTrue(Commands.runOnce(() -> superstructure.selectReef("Right")));
@@ -161,6 +154,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    // superstructure.testAuto(autoFactory).cmd().schedule();
+    superstructure.testAuto(autoFactory).cmd().schedule();
   }
 }
