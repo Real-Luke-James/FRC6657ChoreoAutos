@@ -6,12 +6,12 @@ package frc.robot.subsystems.climber;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Climb extends SubsystemBase {
+public class Climber extends SubsystemBase {
 
-  public final Climber climber;
+  public final ClimberIO io;
 
-  public Climb() {
-    this.climber = new Climber(climberIOs[0], Constants.Climber);
+  public Climber() {
+  
   }
 
   @Override
