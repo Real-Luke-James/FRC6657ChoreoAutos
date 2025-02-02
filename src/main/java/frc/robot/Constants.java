@@ -36,7 +36,8 @@ public class Constants {
     Swerve_BR_E(12),
     Gyro(13),
     Elevetor_Leader(15),
-    Elevator_Follower(16);
+    Elevator_Follower(16),
+    Climber(22);
 
     public int id;
 
@@ -210,5 +211,39 @@ public class Constants {
         new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity((kMaxVelocity / stages) / sprocketPD)
             .withMotionMagicAcceleration((kMaxAcceleration / stages) / sprocketPD);
+  }
+
+  public static final class Climber {
+    public static double maxAngle = Units.degreesToRadians(90); // TODO: Verify
+    public static double minAngle = Units.degreesToRadians(0); // This should be good, right?
+    public static double gearing = (20d / 1) * (72d / 28); // TODO: Make sure the intake doesn't go inside the robot
+
+    public static final double kSupplyLimit = 40;
+    public static final double kStatorLimit = 60;
+
+    public static final CurrentLimitsConfigs currentConfigs =
+      new CurrentLimitsConfigs()
+        .withStatorCurrentLimit(kStatorLimit)
+        .withSupplyCurrentLimit(kSupplyLimit)
+        .withStatorCurrentLimitEnable(true)
+        .withSupplyCurrentLimitEnable(true)
+        .withSupplyCurrentLowerLimit(kSupplyLimit)
+        .withSupplyCurrentLowerTime(0);
+    
+    // TODO: this code is a carbon copy from intake so make sure this actually makes the motor work as intended
+    public static Slot0Configs kPivotSlot0 =
+      new Slot0Configs()
+        .withKS(0)
+        .withKV(12d / ((6380d / 60) * gearing))
+        .withKP(70)
+        .withKI(0)
+        .withKD(0);
+
+    // TODO: same here
+    public static MotionMagicConfigs kPivotMotionMagicConfig =
+      new MotionMagicConfigs()
+          .withMotionMagicCruiseVelocity(Units.degreesToRotations(400))
+          .withMotionMagicAcceleration(Units.degreesToRotations(1200));
+
   }
 }
