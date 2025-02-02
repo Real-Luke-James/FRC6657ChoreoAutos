@@ -186,7 +186,7 @@ public class Constants {
             .withKG(0) // Volts
             .withGravityType(GravityTypeValue.Elevator_Static)
             .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
-            .withKP(70)
+            .withKP(3.5)
             .withKI(0)
             .withKD(0);
 
@@ -203,12 +203,12 @@ public class Constants {
             .withSupplyCurrentLowerTime(0);
 
     // TODO: Tune, these values (should be) very slow.
-    public static double kMaxVelocity = 10; // Inches/s of Carriage Travel
-    public static double kMaxAcceleration = 5; // Inches/s/s of Carriage Travel
+    public static double kMaxVelocity = 80; // Inches/s of Carriage Travel
+    public static double kMaxAcceleration = 100; // Inches/s/s of Carriage Travel
 
     public static MotionMagicConfigs kMotionMagicConfig =
         new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity((kMaxVelocity / stages) / sprocketPD)
-            .withMotionMagicAcceleration((kMaxAcceleration / stages) / sprocketPD);
+            .withMotionMagicCruiseVelocity((kMaxVelocity / stages) / (sprocketPD * Math.PI))
+            .withMotionMagicAcceleration((kMaxAcceleration / stages) / (sprocketPD * Math.PI));
   }
 }
