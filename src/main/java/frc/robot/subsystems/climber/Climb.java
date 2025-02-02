@@ -11,7 +11,7 @@ public class Climb extends SubsystemBase {
   public final Climber climber;
 
   public Climb() {
-    this.climber = new Climber(climberIOs[0], Constants.Climber)
+    this.climber = new Climber(climberIOs[0], Constants.Climber);
   }
 
   @Override
