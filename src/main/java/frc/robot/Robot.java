@@ -123,6 +123,11 @@ public class Robot extends LoggedRobot {
     driver.b().onTrue(elevator.setRawVoltage(0));
     ;
 
+    driver
+        .y()
+        .onTrue(intake.changePivotSetpoint(Units.degreesToRadians(117)))
+        .onFalse(intake.changePivotSetpoint(Units.degreesToRadians(0)));
+
     Logger.start();
   }
 

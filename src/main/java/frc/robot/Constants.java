@@ -36,7 +36,7 @@ public class Constants {
     Swerve_BR_E(12),
     Gyro(13),
     Elevetor_Leader(15),
-    Elevator_Follower(16);
+    Elevator_Follower(16),
     IntakePivot(19),
     IntakeRoller(20),
     IntakeEncoder(21);
@@ -171,10 +171,10 @@ public class Constants {
   }
 
   public static class Intake {
-    public static double pivotGearing = (20d / 1) * (72d / 28); // TODO: Verify
-    public static double rollerGearing = 1.0; // TODO: Verify
+    public static double pivotGearing = (20d / 1) * (72d / 28);
+    public static double rollerGearing = 2;
     public static double maxAngle = Units.degreesToRadians(117);
-    public static double minAngle = Units.degreesToRadians(0); // TODO: change this number
+    public static double minAngle = Units.degreesToRadians(0);
 
     public static final double kPivotSupplyLimit = 40;
     public static final double kPivotStatorLimit = 80;
@@ -190,7 +190,7 @@ public class Constants {
         new Slot0Configs()
             .withKS(0)
             .withKV(12d / ((6380d / 60) * pivotGearing)) // Volts/Mechanism RPS
-            .withKP(70)// TODO Tune
+            .withKP(70) // TODO Tune
             .withKI(0)
             .withKD(0);
 
