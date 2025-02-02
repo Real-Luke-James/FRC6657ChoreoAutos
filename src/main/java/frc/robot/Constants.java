@@ -230,14 +230,17 @@ public class Constants {
         .withSupplyCurrentLowerLimit(kSupplyLimit)
         .withSupplyCurrentLowerTime(0);
     
-    // TODO: this code is a carbon copy from intake so make sure this actually makes the motor work as intended
-    public static Slot0Configs kPivotSlot0 =
-      new Slot0Configs()
-        .withKS(0)
-        .withKV(12d / ((6380d / 60) * gearing))
-        .withKP(70)
-        .withKI(0)
-        .withKD(0);
+    /** 
+    * TODO: this code is a carbon copy from intake so make sure this
+    * actually makes the motor work as intended
+    */
+      public static Slot0Configs kPivotSlot0 =
+        new Slot0Configs()
+          .withKS(0)
+          .withKV(12d / ((6380d / 60) * gearing))
+          .withKP(70)
+          .withKI(0)
+          .withKD(0);
 
     // TODO: same here
     public static MotionMagicConfigs kPivotMotionMagicConfig =
