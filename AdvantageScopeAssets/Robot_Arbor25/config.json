@@ -1,7 +1,10 @@
 {
   "name": "Arbor25",
   "rotations": [
-    {"axis": "z", "degrees": 90}
+    {
+      "axis": "z",
+      "degrees": 90
+    }
   ],
   "position": [
     0,
@@ -11,32 +14,76 @@
   "cameras": [
     {
       "name": "Reef",
-      "rotations": [{"axis": "z", "degrees": 180}],
+      "rotations": [
+        {
+          "axis": "z",
+          "degrees": 180
+        }
+      ],
       "position": [
         -0.35,
         0,
         0.3
       ],
-      "resolution": [1280, 800],
+      "resolution": [
+        1280,
+        800
+      ],
       "fov": 75
     }
   ],
   "components": [
     {
-      "zeroedRotations": [{"axis": "z", "degrees": 90}],
-      "zeroedPosition": [-0.317500,0,-0.228600]
+      "zeroedRotations": [
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [
+        -0.317500,
+        0,
+        -0.228600
+      ]
     },
     {
-      "zeroedRotations": [{"axis": "z", "degrees": 90}],
-      "zeroedPosition": [0,0,0]
+      "zeroedRotations": [
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [
+        0,
+        0,
+        0
+      ]
     },
     {
-      "zeroedRotations": [{"axis": "z", "degrees": 90}],
-      "zeroedPosition": [0,0,0]
+      "zeroedRotations": [
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [
+        0,
+        0,
+        0
+      ]
     },
     {
-      "zeroedRotations": [{"axis": "z", "degrees": 90}],
-      "zeroedPosition": [0,0,0]
+      "zeroedRotations": [
+        {
+          "axis": "z",
+          "degrees": 90
+        }
+      ],
+      "zeroedPosition": [
+        0,
+        0,
+        0
+      ]
     }
   ]
 }

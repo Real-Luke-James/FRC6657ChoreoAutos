@@ -4,18 +4,15 @@
 
 package frc.robot;
 
-import choreo.auto.AutoFactory;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Swerve.ModuleInformation;
-import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drivebase.GyroIO;
 import frc.robot.subsystems.drivebase.GyroIO_Real;
@@ -32,9 +29,6 @@ import frc.robot.subsystems.intake.IntakeIO_Sim;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeIO_Real;
 import frc.robot.subsystems.outtake.OuttakeIO_Sim;
-import frc.robot.subsystems.vision.ApriltagCamera;
-import frc.robot.subsystems.vision.ApriltagCameraIO_Real;
-import frc.robot.subsystems.vision.ApriltagCameraIO_Sim;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -45,15 +39,16 @@ public class Robot extends LoggedRobot {
   private CommandXboxController driver = new CommandXboxController(0);
 
   private Swerve drivebase;
+
   private Intake intake;
   private Elevator elevator;
   private Outtake outtake;
 
-  private ApriltagCamera[] cameras;
+  // private ApriltagCamera[] cameras;
 
   private Superstructure superstructure;
 
-  private final AutoFactory autoFactory;
+  // private final AutoFactory autoFactory;
 
   public Robot() {
 
@@ -78,14 +73,14 @@ public class Robot extends LoggedRobot {
     elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
     outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
 
-    cameras =
-        new ApriltagCamera[] {
-          new ApriltagCamera(
-              RobotBase.isReal()
-                  ? new ApriltagCameraIO_Real(VisionConstants.cameraInfo)
-                  : new ApriltagCameraIO_Sim(VisionConstants.cameraInfo),
-              VisionConstants.cameraInfo)
-        };
+    // cameras =
+    //     new ApriltagCamera[] {
+    //       new ApriltagCamera(
+    //           RobotBase.isReal()
+    //               ? new ApriltagCameraIO_Real(VisionConstants.cameraInfo)
+    //               : new ApriltagCameraIO_Sim(VisionConstants.cameraInfo),
+    //           VisionConstants.cameraInfo)
+    //     };
 
     superstructure = new Superstructure(drivebase, intake, elevator, outtake);
 
@@ -108,7 +103,7 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
 
-    Logger.recordMetadata("ArborSwerveMK4i", "ArborSwerveMK4i");
+    Logger.recordMetadata("Arborbotics 2025", "Arborbotics 2025");
 
     if (isReal()) {
       Logger.addDataReceiver(new WPILOGWriter());
@@ -141,14 +136,14 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
-    for (var camera : cameras) {
-      if (RobotBase.isSimulation()) {
-        camera.updateSimPose(drivebase.getPose());
-      }
-      camera.updateInputs();
-      drivebase.addVisionMeasurement(
-          camera.getEstimatedPose(), camera.getLatestTimestamp(), camera.getLatestStdDevs());
-    }
+    // for (var camera : cameras) {
+    //   if (RobotBase.isSimulation()) {
+    //     camera.updateSimPose(drivebase.getPose());
+    //   }
+    //   camera.updateInputs();
+    //   drivebase.addVisionMeasurement(
+    //       camera.getEstimatedPose(), camera.getLatestTimestamp(), camera.getLatestStdDevs());
+    // }
 
     superstructure.update3DPose();
 
@@ -162,7 +157,10 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
+  public void teleopPeriodic() {}
+
+  @Override
   public void autonomousInit() {
-    superstructure.testAuto(autoFactory).cmd().schedule();
+    // superstructure.testAuto(autoFactory).cmd().schedule();
   }
 }
