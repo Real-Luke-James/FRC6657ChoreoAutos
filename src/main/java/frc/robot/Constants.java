@@ -36,7 +36,7 @@ public class Constants {
     Swerve_BR_E(12),
     Gyro(13),
     
-    OuttakeMotor(16);
+    OuttakeMotor(14);
 
     public int id;
 
