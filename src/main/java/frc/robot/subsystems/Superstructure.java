@@ -95,23 +95,18 @@ public class Superstructure {
     selectedReef = reef;
   }
 
-
   public Command ReefAlginLeft() {
     return Commands.sequence(
-        Commands.runOnce(() -> selectReef("Left")),
-        drivebase.goToPose(() -> getNearestReef()));
+        Commands.runOnce(() -> selectReef("Left")), drivebase.goToPose(() -> getNearestReef()));
   }
 
   public Command ReefAlginRight() {
     return Commands.sequence(
-        Commands.runOnce(() -> selectReef("Right")),
-        drivebase.goToPose(() -> getNearestReef()));
+        Commands.runOnce(() -> selectReef("Right")), drivebase.goToPose(() -> getNearestReef()));
   }
 
   public Command ElevatorL4() {
-    return Commands.sequence(
-        elevator.changeSetpoint(58),
-        Commands.waitUntil(elevator::atSetpoint));
+    return Commands.sequence(elevator.changeSetpoint(58), Commands.waitUntil(elevator::atSetpoint));
   }
 
   public Command ScoreCoral() {
@@ -122,15 +117,14 @@ public class Superstructure {
         Commands.waitUntil(elevator::atSetpoint));
   }
 
-  public Command ScoreL4(){
+  public Command ScoreL4() {
     return Commands.sequence(
         elevator.changeSetpoint(58),
         Commands.waitUntil(elevator::atSetpoint),
-        //Outtake Here
+        // Outtake Here
         Commands.waitSeconds(0.5),
         elevator.changeSetpoint(0),
-        Commands.waitUntil(elevator::atSetpoint)
-    );
+        Commands.waitUntil(elevator::atSetpoint));
   }
 
   // Simple Test Auto that just runs a path.
@@ -144,30 +138,32 @@ public class Superstructure {
     final AutoTrajectory P2_I2 = routine.trajectory("Test 3 Piece", 3);
     final AutoTrajectory I2_P3 = routine.trajectory("Test 3 Piece", 4);
 
-    routine.active().onTrue(
+    routine
+        .active()
+        .onTrue(
             drivebase
                 .resetOdometry(
-                    S_P1
-                        .getInitialPose()
+                    S_P1.getInitialPose()
                         .orElseGet(
                             () -> {
                               routine.kill();
                               return new Pose2d();
-                            })).andThen(Commands.sequence(
-                              S_P1.cmd(),
-                              ReefAlginLeft(),
-                              ScoreL4(),
-                              P1_I1.cmd(),
-                              //Wait for coral
-                              I1_P2.cmd(),
-                              ReefAlginLeft(),
-                              ScoreL4(),
-                              P2_I2.cmd(),
-                              //Wait for coral
-                              I2_P3.cmd(),
-                              ReefAlginRight(),
-                              ScoreL4()
-                            )));
+                            }))
+                .andThen(
+                    Commands.sequence(
+                        S_P1.cmd(),
+                        ReefAlginLeft(),
+                        ScoreL4(),
+                        P1_I1.cmd(),
+                        // Wait for coral
+                        I1_P2.cmd(),
+                        ReefAlginLeft(),
+                        ScoreL4(),
+                        P2_I2.cmd(),
+                        // Wait for coral
+                        I2_P3.cmd(),
+                        ReefAlginRight(),
+                        ScoreL4())));
 
     return routine;
   }
