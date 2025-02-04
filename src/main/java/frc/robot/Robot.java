@@ -49,6 +49,7 @@ public class Robot extends LoggedRobot {
   private CommandGenericHID operator = new CommandGenericHID(1);
 
   private Swerve drivebase;
+
   private Intake intake;
   private Elevator elevator;
   private Outtake outtake;
@@ -82,32 +83,41 @@ public class Robot extends LoggedRobot {
     elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
     outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
 
-    cameras =
-        new ApriltagCamera[] {
-          new ApriltagCamera(
-              RobotBase.isReal()
-                  ? new ApriltagCameraIO_Real(VisionConstants.cameraInfo)
-                  : new ApriltagCameraIO_Sim(VisionConstants.cameraInfo),
-              VisionConstants.cameraInfo)
-        };
+    // cameras =
+    //     new ApriltagCamera[] {
+    //       new ApriltagCamera(
+    //           RobotBase.isReal()
+    //               ? new ApriltagCameraIO_Real(VisionConstants.camera1Info)
+    //               : new ApriltagCameraIO_Sim(VisionConstants.camera1Info),
+    //           VisionConstants.camera1Info),
+    //       new ApriltagCamera(
+    //           RobotBase.isReal()
+    //               ? new ApriltagCameraIO_Real(VisionConstants.camera2Info)
+    //               : new ApriltagCameraIO_Sim(VisionConstants.camera2Info),
+    //           VisionConstants.camera2Info),
+    //       new ApriltagCamera(
+    //           RobotBase.isReal()
+    //               ? new ApriltagCameraIO_Real(VisionConstants.camera3Info)
+    //               : new ApriltagCameraIO_Sim(VisionConstants.camera3Info),
+    //           VisionConstants.camera3Info)
+    //     };
 
     superstructure = new Superstructure(drivebase, intake, elevator, outtake);
 
     autoFactory =
         new AutoFactory(
-                drivebase::getPose,
-                drivebase::resetOdometry,
-                drivebase::followTrajectory,
-                true,
-                drivebase)
-            .bind("nothing", Commands.none());
+            drivebase::getPose,
+            drivebase::resetOdometry,
+            drivebase::followTrajectory,
+            true,
+            drivebase);
   }
 
   @SuppressWarnings("resource")
   @Override
   public void robotInit() {
 
-    Logger.recordMetadata("ArborSwerveMK4i", "ArborSwerveMK4i");
+    Logger.recordMetadata("Arborbotics 2025", "Arborbotics 2025");
 
     if (isReal()) {
       Logger.addDataReceiver(new WPILOGWriter());
@@ -137,28 +147,46 @@ public class Robot extends LoggedRobot {
       andThen(outtake.changeRollerSetpoint(0)));
     driver.rightTrigger().onFalse(outtake.changeRollerSetpoint(0));
 
+    driver.a().whileTrue(drivebase.goToPose(() -> superstructure.getNearestReef()));
+
+    driver.povLeft().onTrue(Commands.runOnce(() -> superstructure.selectReef("Left")));
+    driver.povRight().onTrue(Commands.runOnce(() -> superstructure.selectReef("Right")));
+
     Logger.start();
   }
 
   @Override
   public void robotPeriodic() {
-    for (var camera : cameras) {
-      if (RobotBase.isSimulation()) {
-        camera.updateSimPose(drivebase.getPose());
-      }
-      camera.updateInputs();
-      drivebase.addVisionMeasurement(
-          camera.getEstimatedPose(), camera.getLatestTimestamp(), camera.getLatestStdDevs());
-    }
+    
+    // for (var camera : cameras) {
+    //   if (RobotBase.isSimulation()) {
+    //     camera.updateSimPose(drivebase.getPose());
+    //   }
+    //   camera.updateInputs();
+    //   drivebase.addVisionMeasurement(
+    //       camera.getEstimatedPose(), camera.getLatestTimestamp(), camera.getLatestStdDevs());
+    // }
 
     superstructure.update3DPose();
 
     Logger.recordOutput(
-        "ReefCam Pose",
-        new Pose3d(drivebase.getPose()).transformBy(VisionConstants.cameraInfo.robotToCamera));
+        "ReefCam Pose1",
+        new Pose3d(drivebase.getPose()).transformBy(VisionConstants.camera1Info.robotToCamera));
+
+    Logger.recordOutput(
+        "ReefCam Pose2",
+        new Pose3d(drivebase.getPose()).transformBy(VisionConstants.camera2Info.robotToCamera));
+    Logger.recordOutput(
+        "ReefCam Pose3",
+        new Pose3d(drivebase.getPose()).transformBy(VisionConstants.camera3Info.robotToCamera));
+
+    Logger.recordOutput("AutoAlignPos", superstructure.getNearestReef());
 
     CommandScheduler.getInstance().run();
   }
+
+  @Override
+  public void teleopPeriodic() {}
 
   @Override
   public void autonomousInit() {

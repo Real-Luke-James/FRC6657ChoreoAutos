@@ -65,7 +65,7 @@ public class ModuleIO_Sim implements ModuleIO {
 
     turnSim =
         new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(DCMotor.getFalcon500(1), 0.0001, 1),
+            LinearSystemId.createDCMotorSystem(DCMotor.getFalcon500(1), 0.00001, 1),
             DCMotor.getFalcon500(1));
   }
 
