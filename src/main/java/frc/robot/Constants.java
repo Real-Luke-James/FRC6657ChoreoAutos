@@ -149,13 +149,32 @@ public class Constants {
       }
     }
 
-    public static CameraInfo cameraInfo =
+    public static CameraInfo camera1Info =
         new CameraInfo(
-            "Camera",
+            "Camera1",
             new Transform3d(
-                new Translation3d(-0.302561, -0.294302, 0.24),
-                new Rotation3d(
-                    0, Units.degreesToRadians(-10), Math.PI - Units.degreesToRadians(50))),
+                new Translation3d(-0.320048, -0.300306, 0.299816),
+                new Rotation3d(0, Units.degreesToRadians(0), Math.PI - Units.degreesToRadians(55))),
+            Rotation2d.fromDegrees(95),
+            new int[] {1280, 800});
+
+    public static CameraInfo camera2Info =
+        new CameraInfo(
+            "Camera2",
+            new Transform3d(
+                new Translation3d(
+                    Units.inchesToMeters(3), Units.inchesToMeters(4), Units.inchesToMeters(9)),
+                new Rotation3d(0, Units.degreesToRadians(0), Math.PI + Units.degreesToRadians(20))),
+            Rotation2d.fromDegrees(95),
+            new int[] {1280, 800});
+
+    public static CameraInfo camera3Info =
+        new CameraInfo(
+            "Camera3",
+            new Transform3d(
+                new Translation3d(
+                    Units.inchesToMeters(7), Units.inchesToMeters(4.1), Units.inchesToMeters(9)),
+                new Rotation3d(0, Units.degreesToRadians(0), 0)),
             Rotation2d.fromDegrees(95),
             new int[] {1280, 800});
 
