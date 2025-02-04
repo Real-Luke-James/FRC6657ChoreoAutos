@@ -68,11 +68,11 @@ public class ModuleIO_Real implements ModuleIO {
     driveConfig.CurrentLimits.SupplyCurrentLimit = 65;
     driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     driveConfig.Feedback.SensorToMechanismRatio = Swerve.DriveGearing.L3.reduction;
-    driveConfig.Slot0.kS = 1; // TODO Tune
-    driveConfig.Slot0.kA = 0; // TODO Tune
+    driveConfig.Slot0.kS = 1;
+    driveConfig.Slot0.kA = 0;
     driveConfig.Slot0.kV = (12d / (Motors.FalconRPS * Swerve.DriveGearing.L3.reduction));
-    driveConfig.Slot0.kP = 2.25; // TODO Tune
-    driveConfig.Slot0.kD = 0; // TODO Tune
+    driveConfig.Slot0.kP = 2.25;
+    driveConfig.Slot0.kD = 0;
 
     drive.getConfigurator().apply(driveConfig);
 
@@ -102,12 +102,12 @@ public class ModuleIO_Real implements ModuleIO {
     turnConfig.CurrentLimits.StatorCurrentLimit = 40;
     turnConfig.CurrentLimits.SupplyCurrentLimit = 30;
     turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    turnConfig.Feedback.SensorToMechanismRatio = Swerve.TurnGearing; // TODO Verify
-    turnConfig.Slot0.kS = 0; // TODO Tune
-    turnConfig.Slot0.kA = 0; // TODO Tune;
-    turnConfig.Slot0.kV = (12d / (Motors.FalconRPS * Swerve.TurnGearing)); // TODO Verify
-    turnConfig.Slot0.kP = 150; // TODO Tune
-    turnConfig.Slot0.kD = 0; // TODO Tune
+    turnConfig.Feedback.SensorToMechanismRatio = Swerve.TurnGearing;
+    turnConfig.Slot0.kS = 0;
+    turnConfig.Slot0.kA = 0;
+    turnConfig.Slot0.kV = (12d / (Motors.FalconRPS * Swerve.TurnGearing));
+    turnConfig.Slot0.kP = 150;
+    turnConfig.Slot0.kD = 0;
     turnConfig.ClosedLoopGeneral.ContinuousWrap = true;
 
     turn.getConfigurator().apply(turnConfig);

@@ -55,7 +55,7 @@ public class IntakeIO_Real implements IntakeIO {
     var rollerConfigurator = rollerMotor.getConfigurator();
     var rollerConfigs = new TalonFXConfiguration();
     rollerConfigs.Feedback.SensorToMechanismRatio = 1.0 / Constants.Intake.rollerGearing;
-    rollerConfigs.CurrentLimits = Constants.Intake.kRollersCurrentConfigs;
+    rollerConfigs.CurrentLimits.SupplyCurrentLimit = Constants.Intake.kRollersCurrentLimit;
     rollerConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     rollerConfigurator.apply(rollerConfigs);
     rollerMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -75,7 +75,7 @@ public class IntakeIO_Real implements IntakeIO {
     var pivotConfigurator = new SparkMaxConfig();
 
     pivotConfigurator.voltageCompensation(12);
-    pivotConfigurator.smartCurrentLimit(Constants.Intake.kPivotSupplyLimit);
+    pivotConfigurator.smartCurrentLimit(Constants.Intake.kPivotCurrentLimit);
     pivotConfigurator.idleMode(IdleMode.kBrake);
     pivotConfigurator.inverted(false);
     pivotMotor.configure(

@@ -24,5 +24,5 @@ public interface ElevatorIO {
 
   public default void changeSetpoint(double setpoint) {}
 
-  public default void setRawVoltage(double voltage) {} // TODO: Remove after tuning kS and kG.
+  public default void setRawVoltage(double voltage) {}
 }

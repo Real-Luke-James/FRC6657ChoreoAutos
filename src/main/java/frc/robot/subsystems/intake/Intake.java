@@ -33,7 +33,9 @@ public class Intake extends SubsystemBase {
   @AutoLogOutput(key = "Intake/AtSetpoint")
   public boolean atSetpoint() {
     return MathUtil.isNear(
-        inputs.pivotMotorSetpoint, inputs.encoderAbsPosition, Units.degreesToRadians(5));
+        inputs.pivotMotorSetpoint,
+        inputs.encoderAbsPosition,
+        Units.degreesToRadians(Constants.Intake.pivotAtSetpointTolerance));
   }
 
   @Override

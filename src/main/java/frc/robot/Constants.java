@@ -23,7 +23,7 @@ public class Constants {
 
   public static double mainLoopFrequency = 50d; // Hz
 
-  public static enum CAN { // TODO: Verify
+  public static enum CAN {
     Swerve_FL_D(1),
     Swerve_FR_D(2),
     Swerve_BL_D(3),
@@ -124,11 +124,11 @@ public class Constants {
 
     // Position PID
     public static final PIDController kXController_Position =
-        new PIDController(5, 0, 0); // TODO: Tune
+        new PIDController(3.8, 0, 0); // TODO: Tune
     public static final PIDController kYController_Position =
-        new PIDController(5, 0, 0); // TODO: Tune
+        new PIDController(3.8, 0, 0); // TODO: Tune
     public static final PIDController kThetaController_Position =
-        new PIDController(5, 0, 0); // TODO: Tune
+        new PIDController(8, 0, 0); // TODO: Tune
   }
 
   public static class VisionConstants {
@@ -246,49 +246,25 @@ public class Constants {
   }
 
   public static class Intake {
-    public static double pivotGearing = (20d / 1) * (72d / 28);
+    public static double pivotGearing = (5d / 1) * (4d / 1) * (3d / 1) * (72d / 28);
     public static double rollerGearing = 2;
     public static double maxAngle = Units.degreesToRadians(117);
     public static double minAngle = Units.degreesToRadians(0);
 
-    public static final int kPivotSupplyLimit = 40;
-    public static final double kPivotStatorLimit = 80;
-
-    public static final double kRollersCurrentLimit = 60;
+    public static final int kPivotCurrentLimit = 40;
+    public static final double kRollersCurrentLimit = 20;
 
     public static final double kGroundIntakeSpeed = 0.7;
     public static final double kFeedSpeed = -0.25;
 
-    public static final double pivotAtSetpointTolerance = 2.0; // degrees TODO tune
-
-    public static Slot0Configs kPivotSlot0 =
-        new Slot0Configs()
-            .withKS(0)
-            .withKV(12d / ((6380d / 60) * pivotGearing)) // Volts/Mechanism RPS
-            .withKP(70) // TODO Tune
-            .withKI(0)
-            .withKD(0);
-
-    public static MotionMagicConfigs kPivotMotionMagicConfig =
-        new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(Units.degreesToRotations(400))
-            .withMotionMagicAcceleration(Units.degreesToRotations(1200));
-
-    public static final CurrentLimitsConfigs kRollersCurrentConfigs =
-        new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(kRollersCurrentLimit)
-            .withSupplyCurrentLimit(kRollersCurrentLimit)
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimitEnable(true)
-            .withSupplyCurrentLowerLimit(kRollersCurrentLimit)
-            .withSupplyCurrentLowerTime(0);
+    public static final double pivotAtSetpointTolerance = 2.0; // degrees
   }
 
   public static class Outtake {
     public static double gearing = 11.0 / 24.0; // we don't need it, but here it is
     // public static double setpointTollerance = 1; // We want this? what unit?
 
-    public static Slot0Configs motorSlot0 = // TODO tune
+    public static Slot0Configs motorSlot0 =
         new Slot0Configs()
             .withKS(0)
             .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
@@ -296,8 +272,7 @@ public class Constants {
             .withKI(0)
             .withKD(0);
 
-    public static final double kSupplyLimit =
-        30; // Slightly slower than the elevator limits, but still placeholder
+    public static final double kSupplyLimit = 30;
     public static final double kStatorLimit = 60;
 
     public static final CurrentLimitsConfigs currentConfigs =
@@ -308,11 +283,6 @@ public class Constants {
             .withSupplyCurrentLimitEnable(true)
             .withSupplyCurrentLowerLimit(kSupplyLimit)
             .withSupplyCurrentLowerTime(0);
-
-    public static MotionMagicConfigs kMotionMagicConfig =
-        new MotionMagicConfigs() // TODO tune
-            .withMotionMagicCruiseVelocity(Units.degreesToRotations(1200))
-            .withMotionMagicAcceleration(Units.degreesToRotations(1800));
   }
 
   public static class Elevator {
@@ -345,7 +315,6 @@ public class Constants {
             .withSupplyCurrentLowerLimit(kSupplyLimit)
             .withSupplyCurrentLowerTime(0);
 
-    // TODO: Tune, these values (should be) very slow.
     public static double kMaxVelocity = 80; // Inches/s of Carriage Travel
     public static double kMaxAcceleration = 100; // Inches/s/s of Carriage Travel
 

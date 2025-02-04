@@ -32,7 +32,7 @@ public class ElevatorIO_Real implements ElevatorIO {
         Constants.Elevator.gearing; // Sets default output to rotations
     motorConfigs.Slot0 = Constants.Elevator.motorSlot0; // PID Constants
     motorConfigs.CurrentLimits = Constants.Elevator.currentConfigs; // Current Limits
-    // motorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;//TODO verify
+    // motorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     motorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motorConfigs.MotionMagic = Constants.Elevator.kMotionMagicConfig;
     leaderConfigurator.apply(motorConfigs); // Configure leader motor

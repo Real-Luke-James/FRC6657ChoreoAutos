@@ -12,7 +12,7 @@ public class OuttakeIO_Real implements OuttakeIO {
   // Roller Motor Controller
   TalonFX rollerMotor = new TalonFX(Constants.CAN.OuttakeMotor.id);
 
-  DigitalInput beambreak = new DigitalInput(7); // Placeholder port number
+  DigitalInput beambreak = new DigitalInput(7);
 
   private double rollerSetpoint = 0;
 
@@ -20,13 +20,10 @@ public class OuttakeIO_Real implements OuttakeIO {
 
     var motorConfigurator = rollerMotor.getConfigurator();
     var motorConfigs = new TalonFXConfiguration();
-    motorConfigs.Feedback.SensorToMechanismRatio =
-        1.0 / Constants.Elevator.gearing; // Sets default output to pivot rotations
     motorConfigs.Slot0 = Constants.Outtake.motorSlot0; // PID Constants
     motorConfigs.CurrentLimits = Constants.Outtake.currentConfigs; // Current Limits
-    // motorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;//TODO verify
-    motorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast; // I think coast makes more sense
-    motorConfigs.MotionMagic = Constants.Outtake.kMotionMagicConfig;
+    // motorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    motorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     motorConfigurator.apply(motorConfigs); // Configure leader motor
 
     var kTemp = rollerMotor.getDeviceTemp();
@@ -37,14 +34,14 @@ public class OuttakeIO_Real implements OuttakeIO {
     kVoltage.setUpdateFrequency(Constants.mainLoopFrequency);
     kCurrent.setUpdateFrequency(Constants.mainLoopFrequency);
 
-    rollerMotor.optimizeBusUtilization(); // Reduces CAN BUS usage
+    rollerMotor.optimizeBusUtilization();
 
     changeSetpoint(0);
   }
 
   @Override
   public void updateInputs(OuttakeIOInputs inputs) {
-    inputs.beamBroken = !beambreak.get(); // verify negation
+    inputs.beamBroken = !beambreak.get();
 
     inputs.kTemp = rollerMotor.getDeviceTemp().getValueAsDouble();
     inputs.kCurrent = rollerMotor.getSupplyCurrent().getValueAsDouble();
@@ -57,6 +54,6 @@ public class OuttakeIO_Real implements OuttakeIO {
 
   @Override
   public void changeSetpoint(double setpoint) {
-    rollerSetpoint = setpoint; // add clamps?
+    rollerSetpoint = setpoint;
   }
 }
