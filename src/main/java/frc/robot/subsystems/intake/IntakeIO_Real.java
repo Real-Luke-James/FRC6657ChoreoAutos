@@ -7,6 +7,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.reduxrobotics.sensors.canandmag.Canandmag;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.EncoderConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -74,6 +75,16 @@ public class IntakeIO_Real implements IntakeIO {
      rollerTempSignal.setUpdateFrequency(Constants.mainLoopFrequency / 4);
      rollerVoltageSignal.setUpdateFrequency(Constants.mainLoopFrequency);
      rollerCurrentSignal.setUpdateFrequency(Constants.mainLoopFrequency);
+
+     pivotMotor.setCANTimeout(250);
+     var pivotConfigurator = new SparkMaxConfig();
+
+     pivotConfigurator.voltageCompensation(12);
+     pivotConfigurator.smartCurrentLimit(Constants.Intake.kPivotSupplyLimit);
+     pivotConfigurator.idleMode(IdleMode.kBrake);
+     pivotConfigurator.inverted(false);
+     pivotMotor.configure(pivotConfigurator, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
  
      rollerMotor.optimizeBusUtilization(); // Reduces CAN bus usage
 
