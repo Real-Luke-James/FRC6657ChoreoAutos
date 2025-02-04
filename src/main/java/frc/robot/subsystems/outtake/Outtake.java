@@ -19,6 +19,10 @@ public class Outtake extends SubsystemBase {
       });
   }
 
+  public boolean noteDetected(){
+    return inputs.beamBroken;
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);

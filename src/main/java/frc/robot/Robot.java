@@ -11,9 +11,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Swerve.ModuleInformation;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.Superstructure;
@@ -43,6 +46,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 public class Robot extends LoggedRobot {
 
   private CommandXboxController driver = new CommandXboxController(0);
+  private CommandGenericHID operator = new CommandGenericHID(1);
 
   private Swerve drivebase;
   private Intake intake;
@@ -113,6 +117,9 @@ public class Robot extends LoggedRobot {
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     }
 
+    Trigger coralDetected = new Trigger(outtake::noteDetected);
+
+
     drivebase.setDefaultCommand(
         drivebase.drive(
             () ->
@@ -120,6 +127,15 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftY(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 7)));
+    
+    
+    driver.rightTrigger().onTrue(outtake.changeRollerSetpoint(0.2));
+    coralDetected.onTrue(
+      outtake.changeRollerSetpoint(0))
+    .onFalse(
+      Commands.waitSeconds(0.5).
+      andThen(outtake.changeRollerSetpoint(0)));
+    driver.rightTrigger().onFalse(outtake.changeRollerSetpoint(0));
 
     Logger.start();
   }
