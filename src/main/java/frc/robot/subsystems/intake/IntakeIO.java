@@ -22,6 +22,7 @@ public interface IntakeIO {
     public double encoderAbsPosition = 0.0; // Rad
     public double encoderRelPosition = 0.0; // Rad
     public double encoderVelocity = 0.0; // Rad/s
+
   }
 
   public default void updateInputs(IntakeIOInputs inputs) {}
