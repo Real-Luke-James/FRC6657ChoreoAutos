@@ -12,14 +12,14 @@ public class Outtake extends SubsystemBase {
     this.io = io;
   }
 
-  public Command changeRollerSetpoint(double setpoint){
+  public Command changeRollerSetpoint(double setpoint) {
     return this.runOnce(
-      () -> {
-        io.changeSetpoint(setpoint);
-      });
+        () -> {
+          io.changeSetpoint(setpoint);
+        });
   }
 
-  public boolean coralDetected(){
+  public boolean coralDetected() {
     return inputs.beamBroken;
   }
 

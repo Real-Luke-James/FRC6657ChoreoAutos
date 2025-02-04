@@ -4,7 +4,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 
@@ -14,7 +13,7 @@ public class OuttakeIO_Real implements OuttakeIO {
   TalonFX rollerMotor = new TalonFX(Constants.CAN.OuttakeMotor.id);
 
   DigitalInput beambreak = new DigitalInput(7); // Placeholder port number
-  
+
   private double rollerSetpoint = 0;
 
   public OuttakeIO_Real() {
@@ -34,7 +33,7 @@ public class OuttakeIO_Real implements OuttakeIO {
     var kVoltage = rollerMotor.getMotorVoltage();
     var kCurrent = rollerMotor.getSupplyCurrent();
 
-    kTemp.setUpdateFrequency(Constants.mainLoopFrequency/4);
+    kTemp.setUpdateFrequency(Constants.mainLoopFrequency / 4);
     kVoltage.setUpdateFrequency(Constants.mainLoopFrequency);
     kCurrent.setUpdateFrequency(Constants.mainLoopFrequency);
 
@@ -44,7 +43,7 @@ public class OuttakeIO_Real implements OuttakeIO {
   }
 
   @Override
-  public void updateInputs(OuttakeIOInputs inputs){
+  public void updateInputs(OuttakeIOInputs inputs) {
     inputs.beamBroken = !beambreak.get(); // verify negation
 
     inputs.kTemp = rollerMotor.getDeviceTemp().getValueAsDouble();

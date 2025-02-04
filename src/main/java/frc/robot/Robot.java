@@ -8,10 +8,10 @@ import choreo.auto.AutoFactory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -36,8 +36,6 @@ import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeIO_Real;
 import frc.robot.subsystems.outtake.OuttakeIO_Sim;
 import frc.robot.subsystems.vision.ApriltagCamera;
-import frc.robot.subsystems.vision.ApriltagCameraIO_Real;
-import frc.robot.subsystems.vision.ApriltagCameraIO_Sim;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -129,7 +127,6 @@ public class Robot extends LoggedRobot {
 
     Trigger coralDetected = new Trigger(outtake::coralDetected);
 
-
     drivebase.setDefaultCommand(
         drivebase.drive(
             () ->
@@ -137,14 +134,11 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftY(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 7)));
-    
-    
+
     driver.rightTrigger().onTrue(outtake.changeRollerSetpoint(0.2));
-    coralDetected.onTrue(
-      outtake.changeRollerSetpoint(0))
-    .onFalse(
-      Commands.waitSeconds(0.5).
-      andThen(outtake.changeRollerSetpoint(0)));
+    coralDetected
+        .onTrue(outtake.changeRollerSetpoint(0))
+        .onFalse(Commands.waitSeconds(0.5).andThen(outtake.changeRollerSetpoint(0)));
     driver.rightTrigger().onFalse(outtake.changeRollerSetpoint(0));
 
     driver.a().whileTrue(drivebase.goToPose(() -> superstructure.getNearestReef()));
@@ -162,7 +156,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
-    
+
     // for (var camera : cameras) {
     //   if (RobotBase.isSimulation()) {
     //     camera.updateSimPose(drivebase.getPose());
