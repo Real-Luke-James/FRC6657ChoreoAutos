@@ -37,12 +37,12 @@ public class Constants {
     Swerve_BL_E(11),
     Swerve_BR_E(12),
     Gyro(13),
+    OuttakeMotor(14),
     Elevetor_Leader(15),
     Elevator_Follower(16),
     IntakePivot(19),
     IntakeRoller(20),
     IntakeEncoder(21);
-    OuttakeMotor(14);
 
     public int id;
 

@@ -27,6 +27,7 @@ public class Superstructure {
   Outtake outtake;
 
   private String selectedReef = "Left";
+  private int elevatorLevel = 2; 
 
   public Superstructure(Swerve drivebase, Intake intake, Elevator elevator, Outtake outtake) {
     this.drivebase = drivebase;
@@ -89,6 +90,10 @@ public class Superstructure {
     }
 
     return new Pose2d();
+  }
+
+  public Command selectElevatorHeight(int height){
+    return Commands.runOnce(() -> {elevatorLevel = height;});
   }
 
   public void selectReef(String reef) {

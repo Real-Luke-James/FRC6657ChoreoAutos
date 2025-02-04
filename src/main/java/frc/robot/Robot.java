@@ -152,6 +152,10 @@ public class Robot extends LoggedRobot {
     driver.povLeft().onTrue(Commands.runOnce(() -> superstructure.selectReef("Left")));
     driver.povRight().onTrue(Commands.runOnce(() -> superstructure.selectReef("Right")));
 
+    operator.button(9).onTrue(superstructure.selectElevatorHeight(2)); // button 2
+    operator.button(8).onTrue(superstructure.selectElevatorHeight(3)); // button 3
+    operator.button(7).onTrue(superstructure.selectElevatorHeight(4)); // button 4
+
     Logger.start();
   }
 
