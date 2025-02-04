@@ -125,8 +125,6 @@ public class Robot extends LoggedRobot {
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     }
 
-    Trigger coralDetected = new Trigger(outtake::coralDetected);
-
     drivebase.setDefaultCommand(
         drivebase.drive(
             () ->
@@ -135,21 +133,10 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 7)));
 
-    driver.rightTrigger().onTrue(outtake.changeRollerSetpoint(0.2));
-    coralDetected
-        .onTrue(outtake.changeRollerSetpoint(0))
-        .onFalse(Commands.waitSeconds(0.5).andThen(outtake.changeRollerSetpoint(0)));
-    driver.rightTrigger().onFalse(outtake.changeRollerSetpoint(0));
-
     driver.a().whileTrue(drivebase.goToPose(() -> superstructure.getNearestReef()));
 
     driver.povLeft().onTrue(Commands.runOnce(() -> superstructure.selectReef("Left")));
     driver.povRight().onTrue(Commands.runOnce(() -> superstructure.selectReef("Right")));
-
-    driver
-        .y()
-        .onTrue(intake.changePivotSetpoint(Units.degreesToRadians(117)))
-        .onFalse(intake.changePivotSetpoint(Units.degreesToRadians(0)));
 
     Logger.start();
   }
