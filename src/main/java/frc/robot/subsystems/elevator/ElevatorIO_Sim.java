@@ -1,5 +1,4 @@
 package frc.robot.subsystems.elevator;
-import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -8,13 +7,19 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants;
+import org.littletonrobotics.junction.Logger;
 
 public class ElevatorIO_Sim implements ElevatorIO {
 
   public ElevatorSim elevatorSim;
 
   public double setpoint = Constants.Elevator.minHeight;
-  public ProfiledPIDController pid = new ProfiledPIDController(75, 0, 0, new Constraints(15d/Constants.Elevator.stages, 7.5/Constants.Elevator.stages));
+  public ProfiledPIDController pid =
+      new ProfiledPIDController(
+          75,
+          0,
+          0,
+          new Constraints(15d / Constants.Elevator.stages, 7.5 / Constants.Elevator.stages));
 
   public ElevatorIO_Sim() {
 
@@ -38,13 +43,16 @@ public class ElevatorIO_Sim implements ElevatorIO {
     inputs.kSetpoint = setpoint;
     inputs.kPosition = elevatorSim.getPositionMeters() * Constants.Elevator.stages;
     inputs.kVelocity = elevatorSim.getVelocityMetersPerSecond() * Constants.Elevator.stages;
-    double pidEffort = pid.calculate(inputs.kPosition / Constants.Elevator.stages, inputs.kSetpoint / Constants.Elevator.stages);
-    inputs.leaderMotorVoltage = MathUtil.clamp(pidEffort, -12,12);
+    double pidEffort =
+        pid.calculate(
+            inputs.kPosition / Constants.Elevator.stages,
+            inputs.kSetpoint / Constants.Elevator.stages);
+    inputs.leaderMotorVoltage = MathUtil.clamp(pidEffort, -12, 12);
     elevatorSim.setInputVoltage(inputs.leaderMotorVoltage);
     elevatorSim.update(1 / Constants.mainLoopFrequency);
 
-    Logger.recordOutput("ElevatorSim/ProfileSetpoint", pid.getSetpoint().position * Constants.Elevator.stages);
-
+    Logger.recordOutput(
+        "ElevatorSim/ProfileSetpoint", pid.getSetpoint().position * Constants.Elevator.stages);
   }
 
   @Override

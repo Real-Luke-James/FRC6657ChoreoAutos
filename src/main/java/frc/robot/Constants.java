@@ -7,8 +7,10 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -37,12 +39,68 @@ public class Constants {
     Gyro(13),
     Elevetor_Leader(15),
     Elevator_Follower(16),
+    IntakePivot(19),
+    IntakeRoller(20),
+    IntakeEncoder(21);
+    OuttakeMotor(14);
     Climber(22);
 
     public int id;
 
     CAN(int id) {
       this.id = id;
+    }
+  }
+
+  public static class FieldConstants {
+
+    private static Pose2d getRedReefPose(Pose2d reefPose) {
+      return new Pose2d(
+          reefPose.getTranslation().getX() + 8.565,
+          reefPose.getTranslation().getY(),
+          reefPose.getRotation());
+    }
+
+    public static class ReefSlot {
+      public Pose2d middle;
+      public Pose2d left;
+      public Pose2d right;
+
+      ReefSlot(Pose2d middle, Pose2d left, Pose2d right) {
+        this.middle = middle;
+        this.left = left;
+        this.right = right;
+      }
+    }
+
+    public static enum ReefPoses {
+      Reef_1(new Pose2d(5.825, 4.03, Rotation2d.fromDegrees(0))),
+      Reef_2(new Pose2d(5.163, 5.177484, Rotation2d.fromDegrees(60))),
+      Reef_3(new Pose2d(3.838, 5.177484, Rotation2d.fromDegrees(120))),
+      Reef_4(new Pose2d(3.175, 4.03, Rotation2d.fromDegrees(180))),
+      Reef_5(new Pose2d(3.8375, 2.882516, Rotation2d.fromDegrees(-120))),
+      Reef_6(new Pose2d(5.1625, 2.882516, Rotation2d.fromDegrees(-60)));
+
+      public ReefSlot blue;
+      public ReefSlot red;
+
+      // Shift the pose to the robot's left
+      public Pose2d getLeftPose(Pose2d pose) {
+        return pose.transformBy(new Transform2d(0, -0.26, new Rotation2d()));
+      }
+
+      public Pose2d getRightPose(Pose2d pose) {
+        return pose.transformBy(new Transform2d(0, 0.06, new Rotation2d()));
+      }
+
+      ReefPoses(Pose2d pose) {
+        this.blue = new ReefSlot(pose, getLeftPose(pose), getRightPose(pose));
+        this.red =
+            new ReefSlot(
+                getRedReefPose(pose),
+                getRedReefPose(getLeftPose(pose)),
+                getRedReefPose(getRightPose(pose)));
+      }
     }
   }
 
@@ -91,13 +149,32 @@ public class Constants {
       }
     }
 
-    public static CameraInfo cameraInfo =
+    public static CameraInfo camera1Info =
         new CameraInfo(
-            "Camera",
+            "Camera1",
             new Transform3d(
-                new Translation3d(-0.302561, -0.294302, 0.24),
-                new Rotation3d(
-                    0, Units.degreesToRadians(-10), Math.PI - Units.degreesToRadians(50))),
+                new Translation3d(-0.320048, -0.300306, 0.299816),
+                new Rotation3d(0, Units.degreesToRadians(0), Math.PI - Units.degreesToRadians(55))),
+            Rotation2d.fromDegrees(95),
+            new int[] {1280, 800});
+
+    public static CameraInfo camera2Info =
+        new CameraInfo(
+            "Camera2",
+            new Transform3d(
+                new Translation3d(
+                    Units.inchesToMeters(3), Units.inchesToMeters(4), Units.inchesToMeters(9)),
+                new Rotation3d(0, Units.degreesToRadians(0), Math.PI + Units.degreesToRadians(20))),
+            Rotation2d.fromDegrees(95),
+            new int[] {1280, 800});
+
+    public static CameraInfo camera3Info =
+        new CameraInfo(
+            "Camera3",
+            new Transform3d(
+                new Translation3d(
+                    Units.inchesToMeters(7), Units.inchesToMeters(4.1), Units.inchesToMeters(9)),
+                new Rotation3d(0, Units.degreesToRadians(0), 0)),
             Rotation2d.fromDegrees(95),
             new int[] {1280, 800});
 
@@ -169,8 +246,81 @@ public class Constants {
   }
 
   public static class Intake {
-    public static double gearing = (20d / 1) * (72d / 28); // TODO: Verify
+    public static double pivotGearing = (20d / 1) * (72d / 28); // TODO: Verify
+    public static double rollerGearing = 1.0; // TODO: Verify
     public static double maxAngle = Units.degreesToRadians(117);
+    public static double minAngle = Units.degreesToRadians(0); // TODO: change this number
+
+    public static final double kPivotSupplyLimit = 40;
+    public static final double kPivotStatorLimit = 80;
+
+    public static final double kRollersCurrentLimit = 60;
+
+    public static final double kGroundIntakeSpeed = 0.7;
+    public static final double kFeedSpeed = -0.25;
+
+    public static final double pivotAtSetpointTolerance = 2.0; // degrees TODO tune
+
+    public static Slot0Configs kPivotSlot0 =
+        new Slot0Configs()
+            .withKS(0)
+            .withKV(12d / ((6380d / 60) * pivotGearing)) // Volts/Mechanism RPS
+            .withKP(70) // TODO Tune
+            .withKI(0)
+            .withKD(0);
+
+    public static MotionMagicConfigs kPivotMotionMagicConfig =
+        new MotionMagicConfigs()
+            .withMotionMagicCruiseVelocity(Units.degreesToRotations(400))
+            .withMotionMagicAcceleration(Units.degreesToRotations(1200));
+
+    public static final CurrentLimitsConfigs kPivotCurrentConfigs =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(kPivotStatorLimit)
+            .withSupplyCurrentLimit(kPivotSupplyLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentLowerLimit(kPivotSupplyLimit)
+            .withSupplyCurrentLowerTime(0);
+
+    public static final CurrentLimitsConfigs kRollersCurrentConfigs =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(kRollersCurrentLimit)
+            .withSupplyCurrentLimit(kRollersCurrentLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentLowerLimit(kRollersCurrentLimit)
+            .withSupplyCurrentLowerTime(0);
+  }
+
+  public static class Outtake {
+    public static double gearing = 11.0 / 24.0; // we don't need it, but here it is
+    //public static double setpointTollerance = 1; // We want this? what unit?
+
+    public static Slot0Configs motorSlot0 = // TODO tune
+        new Slot0Configs()
+            .withKS(0)
+            .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
+            .withKP(70)
+            .withKI(0)
+            .withKD(0);
+
+    public static final double kSupplyLimit = 30; // Slightly slower than the elevator limits, but still placeholder
+    public static final double kStatorLimit = 60;
+
+    public static final CurrentLimitsConfigs currentConfigs =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(kStatorLimit)
+            .withSupplyCurrentLimit(kSupplyLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentLowerLimit(kSupplyLimit)
+            .withSupplyCurrentLowerTime(0);
+
+    public static MotionMagicConfigs kMotionMagicConfig =
+        new MotionMagicConfigs() // TODO tune
+            .withMotionMagicCruiseVelocity(Units.degreesToRotations(1200))
+            .withMotionMagicAcceleration(Units.degreesToRotations(1800));
   }
 
   public static class Elevator {
@@ -187,7 +337,7 @@ public class Constants {
             .withKG(0) // Volts
             .withGravityType(GravityTypeValue.Elevator_Static)
             .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
-            .withKP(70)
+            .withKP(3.5)
             .withKI(0)
             .withKD(0);
 
@@ -204,13 +354,13 @@ public class Constants {
             .withSupplyCurrentLowerTime(0);
 
     // TODO: Tune, these values (should be) very slow.
-    public static double kMaxVelocity = 10; // Inches/s of Carriage Travel
-    public static double kMaxAcceleration = 5; // Inches/s/s of Carriage Travel
+    public static double kMaxVelocity = 80; // Inches/s of Carriage Travel
+    public static double kMaxAcceleration = 100; // Inches/s/s of Carriage Travel
 
     public static MotionMagicConfigs kMotionMagicConfig =
         new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity((kMaxVelocity / stages) / sprocketPD)
-            .withMotionMagicAcceleration((kMaxAcceleration / stages) / sprocketPD);
+            .withMotionMagicCruiseVelocity((kMaxVelocity / stages) / (sprocketPD * Math.PI))
+            .withMotionMagicAcceleration((kMaxAcceleration / stages) / (sprocketPD * Math.PI));
   }
 
   public static final class Climber {
