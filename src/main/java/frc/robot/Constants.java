@@ -217,7 +217,8 @@ public class Constants {
     public static double maxAngle = Units.degreesToRadians(90); // TODO: Verify
     public static double minAngle = Units.degreesToRadians(0); // This should be good, right?
     public static double gearing = (20d / 1) * (72d / 28); // TODO: Make sure the intake doesn't go inside the robot
-
+    public static int currentLimit = 40;
+    public static int
     public static final double kSupplyLimit = 40;
     public static final double kStatorLimit = 60;
 
@@ -231,8 +232,9 @@ public class Constants {
         .withSupplyCurrentLowerTime(0);
     
     /** 
-    * TODO: this code is a carbon copy from intake so make sure this
-    * actually makes the motor work as intended
+    * TODO: this code is a carbon copy from intake 
+    * so make sure this actually makes the motor work
+    * as intended
     */
       public static Slot0Configs kPivotSlot0 =
         new Slot0Configs()
