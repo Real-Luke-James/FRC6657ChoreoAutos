@@ -152,8 +152,11 @@ public class Swerve extends SubsystemBase {
               Logger.recordOutput("Swerve/PositioningMode", "PID");
               positionController(target.get());
             })
-        .until(() -> atPose(target.get()))
-        .andThen(Commands.runOnce(() -> this.driveChassisSpeeds(new ChassisSpeeds())));
+        .until(
+          () -> atPose(target.get())
+        ).andThen(
+          Commands.runOnce(() ->this.driveChassisSpeeds(new ChassisSpeeds()))
+        );
   }
 
   public Command repulsorCommand(Supplier<Pose2d> target) {

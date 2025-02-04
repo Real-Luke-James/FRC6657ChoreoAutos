@@ -13,55 +13,17 @@
   ],
   "cameras": [
     {
-      "name": "Reef1",
+      "name": "Reef",
       "rotations": [
         {
           "axis": "z",
-          "degrees": 125
+          "degrees": 180
         }
       ],
       "position": [
-        -0.320048,
-        -0.300306,
-        0.299816
-      ],
-      "resolution": [
-        1280,
-        800
-      ],
-      "fov": 75
-    },
-    {
-      "name": "Reef2",
-      "rotations": [
-        {
-          "axis": "z",
-          "degrees": 200
-        }
-      ],
-      "position": [
-        0.101600,
-        -0.076200,
-        0.228600
-      ],
-      "resolution": [
-        1280,
-        800
-      ],
-      "fov": 75
-    },
-    {
-      "name": "Reef3",
-      "rotations": [
-        {
-          "axis": "z",
-          "degrees": 0
-        }
-      ],
-      "position": [
-        0.177800,
-        0.104140,
-        0.228600
+        -0.35,
+        0,
+        0.3
       ],
       "resolution": [
         1280,
