@@ -19,7 +19,7 @@ public class Outtake extends SubsystemBase {
       });
   }
 
-  public boolean noteDetected(){
+  public boolean coralDetected(){
     return inputs.beamBroken;
   }
 

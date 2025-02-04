@@ -117,7 +117,7 @@ public class Robot extends LoggedRobot {
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     }
 
-    Trigger coralDetected = new Trigger(outtake::noteDetected);
+    Trigger coralDetected = new Trigger(outtake::coralDetected);
 
 
     drivebase.setDefaultCommand(
