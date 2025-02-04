@@ -42,6 +42,7 @@ public class Constants {
     IntakePivot(19),
     IntakeRoller(20),
     IntakeEncoder(21);
+    OuttakeMotor(14);
 
     public int id;
 
@@ -289,6 +290,36 @@ public class Constants {
             .withSupplyCurrentLimitEnable(true)
             .withSupplyCurrentLowerLimit(kRollersCurrentLimit)
             .withSupplyCurrentLowerTime(0);
+  }
+
+  public static class Outtake {
+    public static double gearing = 11.0 / 24.0; // we don't need it, but here it is
+    //public static double setpointTollerance = 1; // We want this? what unit?
+
+    public static Slot0Configs motorSlot0 = // TODO tune
+        new Slot0Configs()
+            .withKS(0)
+            .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
+            .withKP(70)
+            .withKI(0)
+            .withKD(0);
+
+    public static final double kSupplyLimit = 30; // Slightly slower than the elevator limits, but still placeholder
+    public static final double kStatorLimit = 60;
+
+    public static final CurrentLimitsConfigs currentConfigs =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(kStatorLimit)
+            .withSupplyCurrentLimit(kSupplyLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentLowerLimit(kSupplyLimit)
+            .withSupplyCurrentLowerTime(0);
+
+    public static MotionMagicConfigs kMotionMagicConfig =
+        new MotionMagicConfigs() // TODO tune
+            .withMotionMagicCruiseVelocity(Units.degreesToRotations(1200))
+            .withMotionMagicAcceleration(Units.degreesToRotations(1800));
   }
 
   public static class Elevator {
