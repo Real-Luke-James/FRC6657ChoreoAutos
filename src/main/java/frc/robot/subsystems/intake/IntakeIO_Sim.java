@@ -21,7 +21,7 @@ public class IntakeIO_Sim implements IntakeIO {
   private double speedSetpoint = 0;
 
   @AutoLogOutput(key = "Intake/Angle Setpoint")
-  private double angleSetpoint = Constants.Intake.maxAngle;
+  private double angleSetpoint = Constants.Intake.minAngle;
 
   // Simulated Motors
   private DCMotorSim pivotSim =
@@ -38,8 +38,8 @@ public class IntakeIO_Sim implements IntakeIO {
   private PIDController pivotPID = new PIDController(96d / 360, 0, 0);
 
   public IntakeIO_Sim() {
-    pivotSim.setState(Units.degreesToRadians(Constants.Intake.maxAngle), 0);
-    pivotPID.setTolerance(2);
+    pivotSim.setState(Units.degreesToRadians(Constants.Intake.minAngle), 0);
+    pivotPID.setTolerance(Units.degreesToRadians(5));
   }
 
   @Override
@@ -52,12 +52,12 @@ public class IntakeIO_Sim implements IntakeIO {
     rollerSim.update(1 / Constants.mainLoopFrequency);
 
     // Pivot Inputs
-    inputs.pivotMotorPosition = pivotSim.getAngularPositionRotations() * 360; // Degrees
-    inputs.pivotMotorVelocity = pivotSim.getAngularVelocityRPM() * (360d / 60); // Degrees
+    inputs.pivotMotorPosition = pivotSim.getAngularPositionRad();
+    inputs.encoderAbsPosition = pivotSim.getAngularPositionRad();
+    inputs.pivotMotorVelocity = pivotSim.getAngularVelocityRadPerSec();
     inputs.pivotMotorTemp = 0; // Celcius
     inputs.pivotMotorVoltage = pivotVoltage; // Volts (set to 0)
     inputs.pivotMotorCurrent = pivotSim.getCurrentDrawAmps(); // Amps
-    inputs.atSetpoint = pivotPID.atSetpoint();
     inputs.pivotMotorSetpoint = angleSetpoint;
 
     // Roller Inputs
@@ -70,20 +70,15 @@ public class IntakeIO_Sim implements IntakeIO {
   /**
    * Change the setpoint of the shooter pivot
    *
-   * @param angleDegrees The new setpoint in degrees
+   * @param angleDegrees The new setpoint in radians
    *     <p>Acceptable Range: Find it.
    */
   @Override
-  public void changePivotSetpoint(double angleDegrees) {
-    angleSetpoint = angleDegrees;
+  public void changePivotSetpoint(double angle) {
+    angleSetpoint = angle;
   }
 
-  /**
-   * Change the setpoint of the shooter pivot
-   *
-   * @param rpm The new setpoint in degrees
-   *     <p>Acceptable Range: [-1, 1] Positive RPM may be shooting?
-   */
+  /** Acceptable Range: [-1, 1] Positive RPM may be shooting? */
   @Override
   public void changeRollerSpeed(double speed) {
     rollerVoltage = speed;
@@ -91,8 +86,7 @@ public class IntakeIO_Sim implements IntakeIO {
 
   private void updatePID() {
     // Pivot
-    double pivotPIDEffort =
-        pivotPID.calculate(pivotSim.getAngularPositionRotations() * 360, angleSetpoint);
+    double pivotPIDEffort = pivotPID.calculate(pivotSim.getAngularPositionRad(), angleSetpoint);
     pivotVoltage = MathUtil.clamp(pivotPIDEffort, -12, 12);
     pivotSim.setInput(pivotVoltage);
 

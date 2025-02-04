@@ -152,6 +152,11 @@ public class Robot extends LoggedRobot {
     driver.povLeft().onTrue(Commands.runOnce(() -> superstructure.selectReef("Left")));
     driver.povRight().onTrue(Commands.runOnce(() -> superstructure.selectReef("Right")));
 
+    driver
+        .y()
+        .onTrue(intake.changePivotSetpoint(Units.degreesToRadians(117)))
+        .onFalse(intake.changePivotSetpoint(Units.degreesToRadians(0)));
+
     Logger.start();
   }
 

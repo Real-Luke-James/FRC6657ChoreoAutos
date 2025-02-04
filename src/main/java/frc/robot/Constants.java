@@ -246,12 +246,12 @@ public class Constants {
   }
 
   public static class Intake {
-    public static double pivotGearing = (20d / 1) * (72d / 28); // TODO: Verify
-    public static double rollerGearing = 1.0; // TODO: Verify
+    public static double pivotGearing = (20d / 1) * (72d / 28);
+    public static double rollerGearing = 2;
     public static double maxAngle = Units.degreesToRadians(117);
-    public static double minAngle = Units.degreesToRadians(0); // TODO: change this number
+    public static double minAngle = Units.degreesToRadians(0);
 
-    public static final double kPivotSupplyLimit = 40;
+    public static final int kPivotSupplyLimit = 40;
     public static final double kPivotStatorLimit = 80;
 
     public static final double kRollersCurrentLimit = 60;
@@ -273,15 +273,6 @@ public class Constants {
         new MotionMagicConfigs()
             .withMotionMagicCruiseVelocity(Units.degreesToRotations(400))
             .withMotionMagicAcceleration(Units.degreesToRotations(1200));
-
-    public static final CurrentLimitsConfigs kPivotCurrentConfigs =
-        new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(kPivotStatorLimit)
-            .withSupplyCurrentLimit(kPivotSupplyLimit)
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimitEnable(true)
-            .withSupplyCurrentLowerLimit(kPivotSupplyLimit)
-            .withSupplyCurrentLowerTime(0);
 
     public static final CurrentLimitsConfigs kRollersCurrentConfigs =
         new CurrentLimitsConfigs()
