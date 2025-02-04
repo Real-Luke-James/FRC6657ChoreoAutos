@@ -199,8 +199,6 @@ public class Constants {
             .withMotionMagicCruiseVelocity(Units.degreesToRotations(400))
             .withMotionMagicAcceleration(Units.degreesToRotations(1200));
 
-    
-
     public static final CurrentLimitsConfigs kRollersCurrentConfigs =
         new CurrentLimitsConfigs()
             .withStatorCurrentLimit(kRollersCurrentLimit)
