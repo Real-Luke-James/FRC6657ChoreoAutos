@@ -5,9 +5,7 @@ import org.littletonrobotics.junction.AutoLog;
 public interface OuttakeIO {
 
   @AutoLog
-  public static class OuttakeIOInputs {
-
-  }
+  public static class OuttakeIOInputs {}
 
   public default void updateInputs(OuttakeIOInputs inputs) {}
 

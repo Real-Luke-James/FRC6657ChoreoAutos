@@ -14,8 +14,7 @@ public class Intake extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-  }
+  public void periodic() {}
 
   public Pose3d get3DPose() {
     return new Pose3d(0.3175, 0, 0.2286, new Rotation3d(0, 0, 0));
