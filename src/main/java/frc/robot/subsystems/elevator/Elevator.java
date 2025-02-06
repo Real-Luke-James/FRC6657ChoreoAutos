@@ -3,9 +3,11 @@ package frc.robot.subsystems.elevator;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
@@ -37,8 +39,18 @@ public class Elevator extends SubsystemBase {
         });
   }
 
+  public Command changeSetpoint(DoubleSupplier setpointSupplier) {
+    return this.runOnce(
+        () ->
+            io.changeSetpoint(
+                MathUtil.clamp(
+                    setpointSupplier.getAsDouble(),
+                    Constants.Elevator.minHeight,
+                    Constants.Elevator.maxHeight)));
+  }
+
   public boolean atSetpoint() {
-    return MathUtil.isNear(inputs.kSetpoint, inputs.kPosition, 1);
+    return MathUtil.isNear(inputs.kSetpoint, inputs.kPosition, Units.inchesToMeters(1));
   }
 
   public Command setRawVoltage(double voltage) {
