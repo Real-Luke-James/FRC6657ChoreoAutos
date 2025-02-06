@@ -37,12 +37,12 @@ public class Constants {
     Swerve_BL_E(11),
     Swerve_BR_E(12),
     Gyro(13),
+    OuttakeMotor(14),
     Elevetor_Leader(15),
     Elevator_Follower(16),
     IntakePivot(19),
     IntakeRoller(20),
-    IntakeEncoder(21);
-    OuttakeMotor(14);
+    IntakeEncoder(21),
     Climber(22);
 
     public int id;
@@ -368,7 +368,6 @@ public class Constants {
     public static double minAngle = Units.degreesToRadians(0); // This should be good, right?
     public static double gearing = (20d / 1) * (72d / 28); // TODO: Make sure the intake doesn't go inside the robot
     public static int currentLimit = 40;
-    public static int
     public static final double kSupplyLimit = 40;
     public static final double kStatorLimit = 60;
 
