@@ -15,7 +15,6 @@ public interface ClimberIO {
     public double setpoint = 0.0;
     public boolean atSetpoint = false;
 
-    public double encoderAbsPosition = 0.0; // Rad
     public double encoderRelPosition = 0.0; // Rad
     public double encoderVelocity = 0.0; // Rad/s
   }
