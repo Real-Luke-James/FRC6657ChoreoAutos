@@ -13,7 +13,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants.ReefSlot;
 import frc.robot.subsystems.drivebase.Swerve;
 import frc.robot.subsystems.elevator.Elevator;
-import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,23 +21,21 @@ import org.littletonrobotics.junction.Logger;
 public class Superstructure {
 
   Swerve drivebase;
-  Intake intake;
   Elevator elevator;
   Outtake outtake;
 
   private String selectedReef = "Left";
-  private int elevatorLevel = 2; 
+  private int elevatorLevel = 2;
 
-  public Superstructure(Swerve drivebase, Intake intake, Elevator elevator, Outtake outtake) {
+  public Superstructure(Swerve drivebase, Elevator elevator, Outtake outtake) {
     this.drivebase = drivebase;
-    this.intake = intake;
     this.elevator = elevator;
     this.outtake = outtake;
   }
 
   public void update3DPose() {
     Pose3d[] mechanismPoses = new Pose3d[4];
-    mechanismPoses[0] = intake.get3DPose();
+    mechanismPoses[0] = new Pose3d();
     mechanismPoses[1] = elevator.get3DPoses()[0];
     mechanismPoses[2] = elevator.get3DPoses()[1];
     mechanismPoses[3] = elevator.get3DPoses()[2];
@@ -92,8 +89,11 @@ public class Superstructure {
     return new Pose2d();
   }
 
-  public Command selectElevatorHeight(int height){
-    return Commands.runOnce(() -> {elevatorLevel = height;});
+  public Command selectElevatorHeight(int height) {
+    return Commands.runOnce(
+        () -> {
+          elevatorLevel = height;
+        });
   }
 
   public void selectReef(String reef) {

@@ -13,7 +13,6 @@ public interface OuttakeIO {
     public double kTemp = 0.0;
     public double kVoltage = 0.0;
     public double kCurrent = 0.0;
-
   }
 
   public default void updateInputs(OuttakeIOInputs inputs) {}

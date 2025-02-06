@@ -11,7 +11,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -29,15 +28,10 @@ import frc.robot.subsystems.drivebase.Swerve;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO_Real;
 import frc.robot.subsystems.elevator.ElevatorIO_Sim;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIO_Real;
-import frc.robot.subsystems.intake.IntakeIO_Sim;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeIO_Real;
 import frc.robot.subsystems.outtake.OuttakeIO_Sim;
 import frc.robot.subsystems.vision.ApriltagCamera;
-import frc.robot.subsystems.vision.ApriltagCameraIO_Real;
-import frc.robot.subsystems.vision.ApriltagCameraIO_Sim;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -50,7 +44,7 @@ public class Robot extends LoggedRobot {
 
   private Swerve drivebase;
 
-  private Intake intake;
+  // private Intake intake;
   private Elevator elevator;
   private Outtake outtake;
 
@@ -79,7 +73,7 @@ public class Robot extends LoggedRobot {
                 },
             RobotBase.isReal() ? new GyroIO_Real() : new GyroIO() {});
 
-    intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
+    // intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
     elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
     outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
 
@@ -102,7 +96,7 @@ public class Robot extends LoggedRobot {
     //           VisionConstants.camera3Info)
     //     };
 
-    superstructure = new Superstructure(drivebase, intake, elevator, outtake);
+    superstructure = new Superstructure(drivebase, elevator, outtake);
 
     autoFactory =
         new AutoFactory(
@@ -129,7 +123,6 @@ public class Robot extends LoggedRobot {
 
     Trigger coralDetected = new Trigger(outtake::coralDetected);
 
-
     drivebase.setDefaultCommand(
         drivebase.drive(
             () ->
@@ -137,14 +130,11 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftY(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 7)));
-    
-    
-    driver.rightTrigger().onTrue(outtake.changeRollerSetpoint(0.2));
-    coralDetected.onTrue(
-      outtake.changeRollerSetpoint(0))
-    .onFalse(
-      Commands.waitSeconds(0.5).
-      andThen(outtake.changeRollerSetpoint(0)));
+
+    driver.rightTrigger().onTrue(outtake.changeRollerSetpoint(-0.5));
+    coralDetected
+        .onTrue(outtake.changeRollerSetpoint(0))
+        .onFalse(Commands.waitSeconds(0.5).andThen(outtake.changeRollerSetpoint(0)));
     driver.rightTrigger().onFalse(outtake.changeRollerSetpoint(0));
 
     driver.a().whileTrue(drivebase.goToPose(() -> superstructure.getNearestReef()));
@@ -156,12 +146,13 @@ public class Robot extends LoggedRobot {
     operator.button(8).onTrue(superstructure.selectElevatorHeight(3)); // button 3
     operator.button(7).onTrue(superstructure.selectElevatorHeight(4)); // button 4
 
+    driver.b().onTrue(elevator.changeSetpoint(50)).onFalse(elevator.changeSetpoint(0));
     Logger.start();
   }
 
   @Override
   public void robotPeriodic() {
-    
+
     // for (var camera : cameras) {
     //   if (RobotBase.isSimulation()) {
     //     camera.updateSimPose(drivebase.getPose());

@@ -294,7 +294,7 @@ public class Constants {
 
   public static class Outtake {
     public static double gearing = 11.0 / 24.0; // we don't need it, but here it is
-    //public static double setpointTollerance = 1; // We want this? what unit?
+    // public static double setpointTollerance = 1; // We want this? what unit?
 
     public static Slot0Configs motorSlot0 = // TODO tune
         new Slot0Configs()
@@ -304,7 +304,8 @@ public class Constants {
             .withKI(0)
             .withKD(0);
 
-    public static final double kSupplyLimit = 30; // Slightly slower than the elevator limits, but still placeholder
+    public static final double kSupplyLimit =
+        30; // Slightly slower than the elevator limits, but still placeholder
     public static final double kStatorLimit = 60;
 
     public static final CurrentLimitsConfigs currentConfigs =
