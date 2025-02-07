@@ -1,5 +1,8 @@
 package frc.robot.subsystems.intake;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -11,6 +14,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -29,13 +34,13 @@ public class IntakeIO_Real implements IntakeIO {
   private Canandmag encoder;
 
   // Variables to store/log the setpoints
+  @AutoLogOutput(key = "Intake/AngleSetpoint")
   private double angleSetpoint = Constants.Intake.minAngle;
 
+  @AutoLogOutput(key = "Intake/SpeedSetpoint")
   private double speedSetpoint = 0;
 
-  private ProfiledPIDController pivotPID =
-      new ProfiledPIDController(
-          0, 0, 0, new Constraints(Units.degreesToRadians(50), Units.degreesToRadians(50)));
+  private ProfiledPIDController pivotPID = new ProfiledPIDController(0, 0, 0, new Constraints(Units.degreesToRadians(50), Units.degreesToRadians(50)));
 
   public IntakeIO_Real() {
 
@@ -46,7 +51,8 @@ public class IntakeIO_Real implements IntakeIO {
     pivotMotor.configure(
         new SparkMaxConfig()
             .apply(new EncoderConfig().positionConversionFactor(1d / Constants.Intake.pivotGearing))
-            .smartCurrentLimit(40),
+            .smartCurrentLimit(40)
+            .idleMode(IdleMode.kBrake),
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
@@ -79,8 +85,7 @@ public class IntakeIO_Real implements IntakeIO {
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
 
-    double pidOutput =
-        pivotPID.calculate(Units.rotationsToRadians(inputs.encoderAbsPosition), angleSetpoint);
+    double pidOutput = pivotPID.calculate(Units.rotationsToRadians(inputs.encoderAbsPosition), angleSetpoint);
     pivotMotor.setVoltage(pidOutput);
 
     rollerMotor.set(speedSetpoint);
@@ -101,11 +106,28 @@ public class IntakeIO_Real implements IntakeIO {
     inputs.rollerMotorVoltage = rollerMotor.get() * RobotController.getBatteryVoltage();
     inputs.rollerMotorCurrent = rollerMotor.getSupplyCurrent().getValueAsDouble();
     inputs.rollerMotorSetpoint = speedSetpoint;
+
+    Logger.recordOutput("Intake/PivotPIDOutput", pidOutput);
   }
 
   @Override
-  public void changePivotSetpoint(double setpoint) {}
+  public void changePivotIdlemode(IdleMode mode) {
+    pivotMotor.configure(
+      new SparkMaxConfig()
+          .apply(new EncoderConfig().positionConversionFactor(1d / Constants.Intake.pivotGearing))
+          .smartCurrentLimit(40)
+          .idleMode(mode),
+      ResetMode.kResetSafeParameters,
+      PersistMode.kPersistParameters);
+  }
 
   @Override
-  public void changeRollerSpeed(double speed) {}
+  public void changePivotSetpoint(double setpoint) {
+    angleSetpoint = setpoint;
+  }
+
+  @Override
+  public void changeRollerSpeed(double speed) {
+    speedSetpoint = speed;
+  }
 }

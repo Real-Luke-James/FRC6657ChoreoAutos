@@ -2,6 +2,8 @@ package frc.robot.subsystems.intake;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 public interface IntakeIO {
 
   @AutoLog
@@ -29,4 +31,6 @@ public interface IntakeIO {
   public default void changePivotSetpoint(double setpoint) {}
 
   public default void changeRollerSpeed(double speed) {}
+
+  public default void changePivotIdlemode(IdleMode mode) {}
 }

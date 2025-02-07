@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import org.littletonrobotics.junction.AutoLogOutput;
 
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 public class Intake extends SubsystemBase {
 
   private final IntakeIO io;
@@ -37,6 +39,10 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {}
+
+  public void changePivotIdlemode(IdleMode mode) {
+    io.changePivotIdlemode(mode);
+  }
 
   public Pose3d get3DPose() {
     return new Pose3d(0.3175, 0, 0.2286, new Rotation3d(0, 0, 0));
