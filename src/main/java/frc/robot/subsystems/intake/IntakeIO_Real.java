@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -46,7 +47,8 @@ public class IntakeIO_Real implements IntakeIO {
     pivotMotor.configure(
         new SparkMaxConfig()
             .apply(new EncoderConfig().positionConversionFactor(1d / Constants.Intake.pivotGearing))
-            .smartCurrentLimit(40),
+            .smartCurrentLimit(40)
+            .idleMode(IdleMode.kCoast),
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 

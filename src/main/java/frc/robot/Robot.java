@@ -8,6 +8,7 @@ import choreo.auto.AutoFactory;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -79,7 +80,6 @@ public class Robot extends LoggedRobot {
     intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
     elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
     outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
-    intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
 
     // cameras =
     //     new ApriltagCamera[] {
@@ -151,6 +151,11 @@ public class Robot extends LoggedRobot {
     operator.button(7).onTrue(superstructure.selectElevatorHeight(4)); // button 4
 
     driver.b().onTrue(superstructure.raiseElevator()).onFalse(elevator.changeSetpoint(0));
+
+    driver
+        .leftTrigger()
+        .onTrue(intake.changePivotSetpoint(Units.degreesToRadians(30)))
+        .onFalse(intake.changePivotSetpoint(Units.degreesToRadians(0)));
 
     Logger.start();
   }
