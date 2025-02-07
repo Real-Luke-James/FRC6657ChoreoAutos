@@ -7,7 +7,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -21,7 +20,10 @@ public class Intake extends SubsystemBase {
   }
 
   public Command changePivotSetpoint(double angle) {
-    return this.runOnce(() -> io.changePivotSetpoint(MathUtil.clamp(angle, Constants.Intake.minAngle, Constants.Intake.maxAngle)));
+    return this.runOnce(
+        () ->
+            io.changePivotSetpoint(
+                MathUtil.clamp(angle, Constants.Intake.minAngle, Constants.Intake.maxAngle)));
   }
 
   public Command changeRollerSpeed(double speed) {
@@ -30,7 +32,8 @@ public class Intake extends SubsystemBase {
 
   @AutoLogOutput(key = "Intake/AtSetpoint")
   public boolean atSetpoint() {
-    return MathUtil.isNear(inputs.pivotMotorSetpoint, inputs.encoderAbsPosition, Units.degreesToRadians(5));
+    return MathUtil.isNear(
+        inputs.pivotMotorSetpoint, inputs.encoderAbsPosition, Units.degreesToRadians(5));
   }
 
   @Override
