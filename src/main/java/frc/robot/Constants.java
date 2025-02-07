@@ -45,6 +45,7 @@ public class Constants {
     IntakeEncoder(21),
     Climber(22);
 
+
     public int id;
 
     CAN(int id) {
@@ -246,31 +247,32 @@ public class Constants {
   }
 
   public static class Intake {
-    public static double pivotGearing = (5d / 1) * (4d / 1) * (3d / 1) * (72d / 28);
-    public static double rollerGearing = 2;
+    
+    public static double pivotGearing = (60d / 1) * (72d / 28);
     public static double maxAngle = Units.degreesToRadians(117);
     public static double minAngle = Units.degreesToRadians(0);
 
-    public static final int kPivotCurrentLimit = 40;
-    public static final double kRollersCurrentLimit = 20;
+    public static final double kPivotSupplyLimit = 40;
+    public static final double kRollersCurrentLimit = 30;
+
 
     public static final double kGroundIntakeSpeed = 0.7;
     public static final double kFeedSpeed = -0.25;
 
     public static final double pivotAtSetpointTolerance = 2.0; // degrees
+
+    public static final CurrentLimitsConfigs kRollersCurrentConfigs =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(kRollersCurrentLimit)
+            .withSupplyCurrentLimit(kRollersCurrentLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentLowerLimit(kRollersCurrentLimit)
+            .withSupplyCurrentLowerTime(0);
   }
 
   public static class Outtake {
-    public static double gearing = 11.0 / 24.0; // we don't need it, but here it is
-    // public static double setpointTollerance = 1; // We want this? what unit?
-
-    public static Slot0Configs motorSlot0 =
-        new Slot0Configs()
-            .withKS(0)
-            .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
-            .withKP(70)
-            .withKI(0)
-            .withKD(0);
+    public static double gearing = 11.0 / 24.0;
 
     public static final double kSupplyLimit = 30;
     public static final double kStatorLimit = 60;
@@ -286,14 +288,14 @@ public class Constants {
   }
 
   public static class Elevator {
-    public static double gearing = (5d / 1) * (66d / 22); // TODO: Verify
+    public static double gearing = (5d / 1) * (66d / 22);
     public static double sprocketPD = 0.25 / (Math.sin(Math.PI / 22)); // Inches
     public static double maxHeight = Units.inchesToMeters(60); // Carriage Travel (Meters)
     public static double minHeight = Units.inchesToMeters(0); // Carriage Travel (Meters)
     public static int stages = 3;
     public static double setpointTollerance = Units.inchesToMeters(1);
 
-    public static Slot0Configs motorSlot0 = // TODO tune
+    public static Slot0Configs motorSlot0 =
         new Slot0Configs()
             .withKS(0) // Volts
             .withKG(0) // Volts

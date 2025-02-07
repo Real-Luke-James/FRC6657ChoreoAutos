@@ -27,9 +27,6 @@ import frc.robot.subsystems.drivebase.Swerve;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO_Real;
 import frc.robot.subsystems.elevator.ElevatorIO_Sim;
-import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.intake.IntakeIO_Real;
-import frc.robot.subsystems.intake.IntakeIO_Sim;
 import frc.robot.subsystems.outtake.Outtake;
 import frc.robot.subsystems.outtake.OuttakeIO_Real;
 import frc.robot.subsystems.outtake.OuttakeIO_Sim;
@@ -46,7 +43,7 @@ public class Robot extends LoggedRobot {
 
   private Swerve drivebase;
 
-  private Intake intake;
+  // private Intake intake;
   private Elevator elevator;
   private Outtake outtake;
 
@@ -75,7 +72,7 @@ public class Robot extends LoggedRobot {
                 },
             RobotBase.isReal() ? new GyroIO_Real() : new GyroIO() {});
 
-    intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
+    // intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
     elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
     outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
 
@@ -98,7 +95,7 @@ public class Robot extends LoggedRobot {
     //           VisionConstants.camera3Info)
     //     };
 
-    superstructure = new Superstructure(drivebase, intake, elevator, outtake);
+    superstructure = new Superstructure(drivebase, elevator, outtake);
 
     autoFactory =
         new AutoFactory(
@@ -123,6 +120,8 @@ public class Robot extends LoggedRobot {
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     }
 
+    Trigger coralDetected = new Trigger(outtake::coralDetected);
+
     drivebase.setDefaultCommand(
         drivebase.drive(
             () ->
@@ -131,11 +130,22 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 5,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 7)));
 
+    driver.rightTrigger().onTrue(outtake.changeRollerSetpoint(-0.5));
+    coralDetected
+        .onTrue(outtake.changeRollerSetpoint(0))
+        .onFalse(Commands.waitSeconds(0.5).andThen(outtake.changeRollerSetpoint(0)));
+    driver.rightTrigger().onFalse(outtake.changeRollerSetpoint(0));
+
     driver.a().whileTrue(drivebase.goToPose(() -> superstructure.getNearestReef()));
 
     driver.povLeft().onTrue(Commands.runOnce(() -> superstructure.selectReef("Left")));
     driver.povRight().onTrue(Commands.runOnce(() -> superstructure.selectReef("Right")));
 
+    operator.button(9).onTrue(superstructure.selectElevatorHeight(2)); // button 2
+    operator.button(8).onTrue(superstructure.selectElevatorHeight(3)); // button 3
+    operator.button(7).onTrue(superstructure.selectElevatorHeight(4)); // button 4
+
+    driver.b().onTrue(elevator.changeSetpoint(50)).onFalse(elevator.changeSetpoint(0));
     Logger.start();
   }
 
