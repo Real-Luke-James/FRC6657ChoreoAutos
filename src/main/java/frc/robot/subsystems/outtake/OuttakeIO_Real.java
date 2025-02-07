@@ -53,7 +53,5 @@ public class OuttakeIO_Real implements OuttakeIO {
   }
 
   @Override
-  public void changeSetpoint(double setpoint) {
-    rollerSetpoint = setpoint; // add clamps?
-  }
+  public void changeSetpoint(double setpoint) {}
 }

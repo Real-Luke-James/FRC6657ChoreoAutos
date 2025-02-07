@@ -138,6 +138,7 @@ public class Superstructure {
             elevator
                 .changeSetpoint((() -> elevatorSetpoints[elevatorLevel]))
                 .andThen(Commands.waitUntil(elevator::atSetpoint))));
+
   }
 
   // Command to score a coral.
@@ -151,7 +152,21 @@ public class Superstructure {
         Commands.waitUntil(elevator::atSetpoint));
   }
 
+
   // Simple Example Auto Routine
+  private Command scoreL4Coral(String reef) {
+    return Commands.sequence(
+        selectReef(reef),
+        drivebase.goToPose(() -> getNearestReef()),
+        elevator.changeSetpoint(58),
+        Commands.waitUntil(elevator::atSetpoint),
+        // Outtake Here
+        Commands.waitSeconds(0.5),
+        elevator.changeSetpoint(0),
+        Commands.waitUntil(elevator::atSetpoint));
+  }
+
+  // Simple Test Auto that just runs a path.
   public AutoRoutine testAuto(AutoFactory factory) {
 
     final AutoRoutine routine = factory.newRoutine("Test");
@@ -161,6 +176,10 @@ public class Superstructure {
     final AutoTrajectory I1_P2 = routine.trajectory("Test 3 Piece", 2);
     final AutoTrajectory P2_I2 = routine.trajectory("Test 3 Piece", 3);
     final AutoTrajectory I2_P3 = routine.trajectory("Test 3 Piece", 4);
+
+    S_P1.atTime("Score").onTrue(scoreL4Coral("Left").andThen(P1_I1.cmd().andThen(I1_P2.cmd())));
+    I1_P2.atTime("Score").onTrue(scoreL4Coral("Left").andThen(P2_I2.cmd().andThen(I2_P3.cmd())));
+    I2_P3.atTime("Score").onTrue(scoreL4Coral("Right"));
 
     routine
         .active()
@@ -188,6 +207,7 @@ public class Superstructure {
                         I2_P3.cmd(),
                         ReefAlgin("Right", 4),
                         ScoreCoral())));
+
 
     return routine;
   }

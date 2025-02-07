@@ -25,9 +25,7 @@ public class OuttakeIO_Sim implements OuttakeIO {
   public OuttakeIO_Sim() {}
 
   @Override
-  public void updateInputs(OuttakeIOInputs inputs) {
-
-    outtakeSim.update(1 / Constants.mainLoopFrequency);
+  public void updateInputs(OuttakeIOInputs inputs) {}
 
     // Inputs
     inputs.kVelocity = outtakeSim.getAngularVelocityRPM(); // RPM
@@ -46,4 +44,5 @@ public class OuttakeIO_Sim implements OuttakeIO {
   public void changeSetpoint(double rpm) {
     rpmSetpoint = rpm;
   }
+
 }

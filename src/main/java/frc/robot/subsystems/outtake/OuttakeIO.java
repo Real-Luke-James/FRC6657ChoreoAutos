@@ -15,6 +15,7 @@ public interface OuttakeIO {
     public double kCurrent = 0.0;
   }
 
+
   public default void updateInputs(OuttakeIOInputs inputs) {}
 
   public default void changeSetpoint(double setpoint) {}
