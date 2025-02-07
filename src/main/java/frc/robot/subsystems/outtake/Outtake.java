@@ -1,5 +1,6 @@
 package frc.robot.subsystems.outtake;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -22,7 +23,6 @@ public class Outtake extends SubsystemBase {
   public boolean coralDetected() {
     return inputs.beamBroken;
   }
-
 
   @Override
   public void periodic() {

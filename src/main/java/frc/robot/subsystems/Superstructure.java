@@ -138,7 +138,6 @@ public class Superstructure {
             elevator
                 .changeSetpoint((() -> elevatorSetpoints[elevatorLevel]))
                 .andThen(Commands.waitUntil(elevator::atSetpoint))));
-
   }
 
   // Command to score a coral.
@@ -151,7 +150,6 @@ public class Superstructure {
         elevator.changeSetpoint(0),
         Commands.waitUntil(elevator::atSetpoint));
   }
-
 
   // Simple Example Auto Routine
   private Command scoreL4Coral(String reef) {
@@ -207,7 +205,6 @@ public class Superstructure {
                         I2_P3.cmd(),
                         ReefAlgin("Right", 4),
                         ScoreCoral())));
-
 
     return routine;
   }

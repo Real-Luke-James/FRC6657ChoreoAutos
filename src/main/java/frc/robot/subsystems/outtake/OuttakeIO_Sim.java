@@ -25,8 +25,7 @@ public class OuttakeIO_Sim implements OuttakeIO {
   public OuttakeIO_Sim() {}
 
   @Override
-  public void updateInputs(OuttakeIOInputs inputs) {}
-
+  public void updateInputs(OuttakeIOInputs inputs) {
     // Inputs
     inputs.kVelocity = outtakeSim.getAngularVelocityRPM(); // RPM
     inputs.kTemp = 0; // Celcius (32º F)
@@ -44,5 +43,4 @@ public class OuttakeIO_Sim implements OuttakeIO {
   public void changeSetpoint(double rpm) {
     rpmSetpoint = rpm;
   }
-
 }

@@ -45,7 +45,6 @@ public class Constants {
     IntakeEncoder(21),
     Climber(22);
 
-
     public int id;
 
     CAN(int id) {
@@ -247,14 +246,13 @@ public class Constants {
   }
 
   public static class Intake {
-    
+
     public static double pivotGearing = (60d / 1) * (72d / 28);
     public static double maxAngle = Units.degreesToRadians(117);
     public static double minAngle = Units.degreesToRadians(0);
 
     public static final double kPivotSupplyLimit = 40;
     public static final double kRollersCurrentLimit = 30;
-
 
     public static final double kGroundIntakeSpeed = 0.7;
     public static final double kFeedSpeed = -0.25;
