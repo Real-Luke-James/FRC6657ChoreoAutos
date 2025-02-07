@@ -1,8 +1,13 @@
 package frc.robot.subsystems.intake;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public class Intake extends SubsystemBase {
 

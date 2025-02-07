@@ -47,7 +47,6 @@ public class Robot extends LoggedRobot {
 
   private Swerve drivebase;
 
-  // private Intake intake;
   private Elevator elevator;
   private Outtake outtake;
   private Intake intake;
@@ -77,7 +76,7 @@ public class Robot extends LoggedRobot {
                 },
             RobotBase.isReal() ? new GyroIO_Real() : new GyroIO() {});
 
-    // intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
+    intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
     elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
     outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
     intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());

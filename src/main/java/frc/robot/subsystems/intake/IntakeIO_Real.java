@@ -9,13 +9,6 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkMax;
-import frc.robot.Constants;
-import org.littletonrobotics.junction.AutoLogOutput;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -60,7 +53,6 @@ public class IntakeIO_Real implements IntakeIO {
     // Configure the leading roller motor
     var rollerConfigurator = rollerMotor.getConfigurator();
     var rollerConfigs = new TalonFXConfiguration();
-    rollerConfigs.Feedback.SensorToMechanismRatio = 1.0 / Constants.Intake.rollerGearing;
     rollerConfigs.CurrentLimits = Constants.Intake.kRollersCurrentConfigs;
     rollerConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     rollerConfigurator.apply(rollerConfigs);
@@ -76,16 +68,6 @@ public class IntakeIO_Real implements IntakeIO {
     rollerTempSignal.setUpdateFrequency(Constants.mainLoopFrequency / 4);
     rollerVoltageSignal.setUpdateFrequency(Constants.mainLoopFrequency);
     rollerCurrentSignal.setUpdateFrequency(Constants.mainLoopFrequency);
-
-    pivotMotor.setCANTimeout(250);
-    var pivotConfigurator = new SparkMaxConfig();
-
-    pivotConfigurator.voltageCompensation(12);
-    pivotConfigurator.smartCurrentLimit(Constants.Intake.kPivotSupplyLimit);
-    pivotConfigurator.idleMode(IdleMode.kBrake);
-    pivotConfigurator.inverted(false);
-    pivotMotor.configure(
-        pivotConfigurator, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     rollerMotor.optimizeBusUtilization(); // Reduces CAN bus usage
 
