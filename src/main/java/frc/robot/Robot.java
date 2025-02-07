@@ -155,7 +155,8 @@ public class Robot extends LoggedRobot {
     operator.button(9).onTrue(superstructure.selectElevatorHeight(2)); // button 2
     operator.button(8).onTrue(superstructure.selectElevatorHeight(3)); // button 3
     operator.button(7).onTrue(superstructure.selectElevatorHeight(4)); // button 4
-
+    operator.button(4).onTrue(superstructure.raiseClimber()).onFalse(climber.changeSetpoint(0));
+    
     driver.b().onTrue(superstructure.raiseElevator()).onFalse(elevator.changeSetpoint(0));
 
     Logger.start();
