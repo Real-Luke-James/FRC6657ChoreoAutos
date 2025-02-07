@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ScheduleCommand;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants.ReefSlot;
 import frc.robot.subsystems.drivebase.Swerve;
@@ -115,7 +116,7 @@ public class Superstructure {
 
     // If the selected reef is invalid return the robot's current pose.
     Logger.recordOutput("Errors", "Invalid Reef Selected '" + selectedReef + "'");
-    return currentPos;
+    return nearestReefMiddle;
   }
 
   // Simple command to change the selected reef level.
@@ -171,25 +172,27 @@ public class Superstructure {
 
     S_P1.atTime("Score")
         .onTrue(
-            ReefAlgin("Left", 4).andThen(ScoreCoral()).andThen(P1_I1.cmd().andThen(I1_P2.cmd())));
+            Commands.sequence(
+                ReefAlgin("Left", 4).asProxy(),
+                ScoreCoral().asProxy(),
+                new ScheduleCommand(Commands.sequence(P1_I1.cmd(), I1_P2.cmd()))));
+
     I1_P2
         .atTime("Score")
         .onTrue(
-            ReefAlgin("Left", 4).andThen(ScoreCoral()).andThen(P2_I2.cmd().andThen(I2_P3.cmd())));
-    I2_P3.atTime("Score").onTrue(ReefAlgin("Right", 4).andThen(ScoreCoral()));
+            Commands.sequence(
+                ReefAlgin("Left", 4).asProxy(),
+                ScoreCoral().asProxy(),
+                new ScheduleCommand(Commands.sequence(P2_I2.cmd(), I2_P3.cmd()))));
 
-    routine
-        .active()
+    I2_P3
+        .atTime("Score")
         .onTrue(
-            drivebase
-                .resetOdometry(
-                    S_P1.getInitialPose()
-                        .orElseGet(
-                            () -> {
-                              routine.kill();
-                              return new Pose2d();
-                            }))
-                .andThen(S_P1.cmd()));
+            Commands.sequence(
+              ReefAlgin("Right", 4).asProxy(), 
+              ScoreCoral().asProxy()));
+
+    routine.active().onTrue(Commands.sequence(S_P1.resetOdometry(), S_P1.cmd()));
 
     return routine;
   }

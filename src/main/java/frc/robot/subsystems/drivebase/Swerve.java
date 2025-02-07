@@ -104,6 +104,10 @@ public class Swerve extends SubsystemBase {
         .andThen(Commands.print("Pose Reset"));
   }
 
+  public void resetOdometryChoreo(Pose2d newPose) {
+    resetOdometry(newPose).schedule();
+  }
+
   @AutoLogOutput(key = "Swerve/Positions")
   public SwerveModulePosition[] getModulePositions() {
     return new SwerveModulePosition[] {

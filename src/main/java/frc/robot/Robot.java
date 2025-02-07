@@ -106,7 +106,7 @@ public class Robot extends LoggedRobot {
     autoFactory =
         new AutoFactory(
             drivebase::getPose,
-            drivebase::resetOdometry,
+            drivebase::resetOdometryChoreo,
             drivebase::followTrajectory,
             true,
             drivebase);
