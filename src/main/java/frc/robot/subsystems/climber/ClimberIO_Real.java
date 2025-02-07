@@ -6,8 +6,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotController;
 
@@ -25,11 +24,11 @@ public class ClimberIO_Real implements ClimberIO {
   RelativeEncoder climberEncoder;
 
   // PID Controller
-  private ProfiledPIDController climberPID = new ProfiledPIDController(0, 0, 0, new Constraints(Units.degreesToRadians(50), Units.degreesToRadians(50)));
+  private PIDController climberPID = new PIDController(0, 0, 0);
   
   // store/log setpoints
   @AutoLogOutput(key = "Climber/Angle Setpoint")
-  private double angleSetpoint = Constants.Climber.minAngle;
+  private double angleSetpoint = Constants.Climber.minRotations;
 
   @AutoLogOutput(key = "Climber/Speed Setpoint")
   private double speedSetpoint = 0;
@@ -44,7 +43,7 @@ public class ClimberIO_Real implements ClimberIO {
     mConfig.smartCurrentLimit(Constants.Climber.currentLimit);
     mConfig.idleMode(IdleMode.kBrake);
     climberMotor.configure(mConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    changeSetpoint(Constants.Climber.minAngle);
+    changeSetpoint(Constants.Climber.minRotations);
   }
 
   @Override

@@ -160,7 +160,19 @@ public class Superstructure {
         elevator.changeSetpoint(0),
         Commands.waitUntil(elevator::atSetpoint));
   }
-
+  
+  // Command to move Climber to hook onto cage.
+  // Command will not lower Climber, as the match will end.
+  // Robot will be disabled when ended.
+  public Command raiseClimber() {
+    return Commands.sequence(
+      Commands.print("Raising Climber"),
+      intake.changePivotSetpoint(117d),
+      Commands.waitUntil(intake::atSetpoint),
+      climber.changeSetpoint(90), //TODO: make sure this works
+      Commands.waitUntil(climber::atSetpoint)
+      );
+  }
   // Simple Test Auto that just runs a path.
   public AutoRoutine testAuto(AutoFactory factory) {
 
