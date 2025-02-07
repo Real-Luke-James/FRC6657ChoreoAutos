@@ -14,6 +14,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants.ReefSlot;
 import frc.robot.subsystems.drivebase.Swerve;
 import frc.robot.subsystems.elevator.Elevator;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.outtake.Outtake;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ public class Superstructure {
   Swerve drivebase;
   Elevator elevator;
   Outtake outtake;
+  Intake intake;
 
   @AutoLogOutput(key = "States/Selected Reef")
   private String selectedReef = "Left"; // Selected Reef Pole
@@ -38,10 +40,11 @@ public class Superstructure {
   }; // Array for easily grabbing setpoint heights.
 
   // Constructor
-  public Superstructure(Swerve drivebase, Elevator elevator, Outtake outtake) {
+  public Superstructure(Swerve drivebase, Elevator elevator, Outtake outtake, Intake intake) {
     this.drivebase = drivebase;
     this.elevator = elevator;
     this.outtake = outtake;
+    this.intake = intake;
   }
 
   /*
@@ -49,7 +52,7 @@ public class Superstructure {
    */
   public void update3DPose() {
     Pose3d[] mechanismPoses = new Pose3d[4];
-    mechanismPoses[0] = new Pose3d();
+    mechanismPoses[0] = intake.get3DPose();
     mechanismPoses[1] = elevator.get3DPoses()[0];
     mechanismPoses[2] = elevator.get3DPoses()[1];
     mechanismPoses[3] = elevator.get3DPoses()[2];
@@ -125,6 +128,10 @@ public class Superstructure {
     return Commands.runOnce(() -> selectedReef = reef);
   }
 
+  public Command raiseElevator() {
+    return elevator.changeSetpoint(() -> elevatorSetpoints[elevatorLevel]);
+  }
+
   // Command to algin to the reef and get ready to score a coral.
   // This command aligns the drivebase to the nearest reef and raises the elevator to the selected
   // reef level.
@@ -151,19 +158,6 @@ public class Superstructure {
         Commands.waitUntil(elevator::atSetpoint));
   }
 
-  // Simple Example Auto Routine
-  private Command scoreL4Coral(String reef) {
-    return Commands.sequence(
-        selectReef(reef),
-        drivebase.goToPose(() -> getNearestReef()),
-        elevator.changeSetpoint(58),
-        Commands.waitUntil(elevator::atSetpoint),
-        // Outtake Here
-        Commands.waitSeconds(0.5),
-        elevator.changeSetpoint(0),
-        Commands.waitUntil(elevator::atSetpoint));
-  }
-
   // Simple Test Auto that just runs a path.
   public AutoRoutine testAuto(AutoFactory factory) {
 
@@ -175,9 +169,14 @@ public class Superstructure {
     final AutoTrajectory P2_I2 = routine.trajectory("Test 3 Piece", 3);
     final AutoTrajectory I2_P3 = routine.trajectory("Test 3 Piece", 4);
 
-    S_P1.atTime("Score").onTrue(scoreL4Coral("Left").andThen(P1_I1.cmd().andThen(I1_P2.cmd())));
-    I1_P2.atTime("Score").onTrue(scoreL4Coral("Left").andThen(P2_I2.cmd().andThen(I2_P3.cmd())));
-    I2_P3.atTime("Score").onTrue(scoreL4Coral("Right"));
+    S_P1.atTime("Score")
+        .onTrue(
+            ReefAlgin("Left", 4).andThen(ScoreCoral()).andThen(P1_I1.cmd().andThen(I1_P2.cmd())));
+    I1_P2
+        .atTime("Score")
+        .onTrue(
+            ReefAlgin("Left", 4).andThen(ScoreCoral()).andThen(P2_I2.cmd().andThen(I2_P3.cmd())));
+    I2_P3.atTime("Score").onTrue(ReefAlgin("Right", 4).andThen(ScoreCoral()));
 
     routine
         .active()
@@ -190,21 +189,7 @@ public class Superstructure {
                               routine.kill();
                               return new Pose2d();
                             }))
-                .andThen(
-                    Commands.sequence(
-                        S_P1.cmd(),
-                        ReefAlgin("Left", 4),
-                        ScoreCoral(),
-                        P1_I1.cmd(),
-                        // Wait for coral
-                        I1_P2.cmd(),
-                        ReefAlgin("Left", 4),
-                        ScoreCoral(),
-                        P2_I2.cmd(),
-                        // Wait for coral
-                        I2_P3.cmd(),
-                        ReefAlgin("Right", 4),
-                        ScoreCoral())));
+                .andThen(S_P1.cmd()));
 
     return routine;
   }
