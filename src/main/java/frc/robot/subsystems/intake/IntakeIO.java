@@ -1,8 +1,7 @@
 package frc.robot.subsystems.intake;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeIO {
 

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import choreo.auto.AutoFactory;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -40,9 +41,6 @@ import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 public class Robot extends LoggedRobot {
 
