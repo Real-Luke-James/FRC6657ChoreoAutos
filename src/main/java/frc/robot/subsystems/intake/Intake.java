@@ -13,6 +13,23 @@ public class Intake extends SubsystemBase {
     this.io = io;
   }
 
+  public Command changePivotSetpoint(double angle) {
+    return this.runOnce(
+        () ->
+            io.changePivotSetpoint(
+                MathUtil.clamp(angle, Constants.Intake.minAngle, Constants.Intake.maxAngle)));
+  }
+
+  public Command changeRollerSpeed(double speed) {
+    return this.runOnce(() -> io.changeRollerSpeed(MathUtil.clamp(speed, -1, 1)));
+  }
+
+  @AutoLogOutput(key = "Intake/AtSetpoint")
+  public boolean atSetpoint() {
+    return MathUtil.isNear(
+        inputs.pivotMotorSetpoint, inputs.encoderAbsPosition, Units.degreesToRadians(5));
+  }
+
   @Override
   public void periodic() {}
 
