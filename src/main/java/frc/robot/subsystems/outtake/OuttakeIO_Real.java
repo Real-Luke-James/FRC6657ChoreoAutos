@@ -22,11 +22,8 @@ public class OuttakeIO_Real implements OuttakeIO {
     var motorConfigs = new TalonFXConfiguration();
     motorConfigs.Feedback.SensorToMechanismRatio =
         1.0 / Constants.Elevator.gearing; // Sets default output to pivot rotations
-    motorConfigs.Slot0 = Constants.Outtake.motorSlot0; // PID Constants
     motorConfigs.CurrentLimits = Constants.Outtake.currentConfigs; // Current Limits
-    // motorConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;//TODO verify
     motorConfigs.MotorOutput.NeutralMode = NeutralModeValue.Brake; // I think coast makes more sense
-    motorConfigs.MotionMagic = Constants.Outtake.kMotionMagicConfig;
     motorConfigurator.apply(motorConfigs); // Configure leader motor
 
     var kTemp = rollerMotor.getDeviceTemp();
