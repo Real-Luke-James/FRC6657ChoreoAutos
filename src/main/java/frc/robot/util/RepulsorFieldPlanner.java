@@ -315,7 +315,7 @@ public class RepulsorFieldPlanner {
         new Translation2d(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
     double currentSpeed =
         Math.hypot(currentSpeeds.vxMetersPerSecond, currentSpeeds.vyMetersPerSecond);
-    double stepSize_m = maxSpeed * 0.02; // TODO
+    double stepSize_m = maxSpeed * 0.02;
     if (goalOpt.isEmpty()) {
       return sample(pose.getTranslation(), pose.getRotation(), 0, 0, 0);
     } else {

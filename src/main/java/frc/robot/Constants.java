@@ -23,7 +23,7 @@ public class Constants {
 
   public static double mainLoopFrequency = 50d; // Hz
 
-  public static enum CAN { // TODO: Verify
+  public static enum CAN {
     Swerve_FL_D(1),
     Swerve_FR_D(2),
     Swerve_BL_D(3),
@@ -124,11 +124,11 @@ public class Constants {
 
     // Position PID
     public static final PIDController kXController_Position =
-        new PIDController(5, 0, 0); // TODO: Tune
+        new PIDController(3.8, 0, 0); // TODO: Tune
     public static final PIDController kYController_Position =
-        new PIDController(5, 0, 0); // TODO: Tune
+        new PIDController(3.8, 0, 0); // TODO: Tune
     public static final PIDController kThetaController_Position =
-        new PIDController(5, 0, 0); // TODO: Tune
+        new PIDController(8, 0, 0); // TODO: Tune
   }
 
   public static class VisionConstants {
@@ -246,42 +246,18 @@ public class Constants {
   }
 
   public static class Intake {
-    public static double pivotGearing = (20d / 1) * (72d / 28); // TODO: Verify
-    public static double rollerGearing = 1.0; // TODO: Verify
+
+    public static double pivotGearing = (60d / 1) * (72d / 28);
     public static double maxAngle = Units.degreesToRadians(117);
-    public static double minAngle = Units.degreesToRadians(0); // TODO: change this number
+    public static double minAngle = Units.degreesToRadians(0);
 
     public static final double kPivotSupplyLimit = 40;
-    public static final double kPivotStatorLimit = 80;
-
-    public static final double kRollersCurrentLimit = 60;
+    public static final double kRollersCurrentLimit = 30;
 
     public static final double kGroundIntakeSpeed = 0.7;
     public static final double kFeedSpeed = -0.25;
 
-    public static final double pivotAtSetpointTolerance = 2.0; // degrees TODO tune
-
-    public static Slot0Configs kPivotSlot0 =
-        new Slot0Configs()
-            .withKS(0)
-            .withKV(12d / ((6380d / 60) * pivotGearing)) // Volts/Mechanism RPS
-            .withKP(70) // TODO Tune
-            .withKI(0)
-            .withKD(0);
-
-    public static MotionMagicConfigs kPivotMotionMagicConfig =
-        new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(Units.degreesToRotations(400))
-            .withMotionMagicAcceleration(Units.degreesToRotations(1200));
-
-    public static final CurrentLimitsConfigs kPivotCurrentConfigs =
-        new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(kPivotStatorLimit)
-            .withSupplyCurrentLimit(kPivotSupplyLimit)
-            .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimitEnable(true)
-            .withSupplyCurrentLowerLimit(kPivotSupplyLimit)
-            .withSupplyCurrentLowerTime(0);
+    public static final double pivotAtSetpointTolerance = 2.0; // degrees
 
     public static final CurrentLimitsConfigs kRollersCurrentConfigs =
         new CurrentLimitsConfigs()
@@ -294,18 +270,9 @@ public class Constants {
   }
 
   public static class Outtake {
-    public static double gearing = 11.0 / 24.0; // we don't need it, but here it is
-    //public static double setpointTollerance = 1; // We want this? what unit?
+    public static double gearing = 11.0 / 24.0;
 
-    public static Slot0Configs motorSlot0 = // TODO tune
-        new Slot0Configs()
-            .withKS(0)
-            .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
-            .withKP(70)
-            .withKI(0)
-            .withKD(0);
-
-    public static final double kSupplyLimit = 30; // Slightly slower than the elevator limits, but still placeholder
+    public static final double kSupplyLimit = 30;
     public static final double kStatorLimit = 60;
 
     public static final CurrentLimitsConfigs currentConfigs =
@@ -316,22 +283,17 @@ public class Constants {
             .withSupplyCurrentLimitEnable(true)
             .withSupplyCurrentLowerLimit(kSupplyLimit)
             .withSupplyCurrentLowerTime(0);
-
-    public static MotionMagicConfigs kMotionMagicConfig =
-        new MotionMagicConfigs() // TODO tune
-            .withMotionMagicCruiseVelocity(Units.degreesToRotations(1200))
-            .withMotionMagicAcceleration(Units.degreesToRotations(1800));
   }
 
   public static class Elevator {
-    public static double gearing = (5d / 1) * (66d / 22); // TODO: Verify
+    public static double gearing = (5d / 1) * (66d / 22);
     public static double sprocketPD = 0.25 / (Math.sin(Math.PI / 22)); // Inches
     public static double maxHeight = Units.inchesToMeters(60); // Carriage Travel (Meters)
     public static double minHeight = Units.inchesToMeters(0); // Carriage Travel (Meters)
     public static int stages = 3;
     public static double setpointTollerance = Units.inchesToMeters(1);
 
-    public static Slot0Configs motorSlot0 = // TODO tune
+    public static Slot0Configs motorSlot0 =
         new Slot0Configs()
             .withKS(0) // Volts
             .withKG(0) // Volts
@@ -353,7 +315,6 @@ public class Constants {
             .withSupplyCurrentLowerLimit(kSupplyLimit)
             .withSupplyCurrentLowerTime(0);
 
-    // TODO: Tune, these values (should be) very slow.
     public static double kMaxVelocity = 80; // Inches/s of Carriage Travel
     public static double kMaxAcceleration = 100; // Inches/s/s of Carriage Travel
 
@@ -366,38 +327,37 @@ public class Constants {
   public static final class Climber {
     public static double maxAngle = Units.degreesToRadians(90); // TODO: Verify
     public static double minAngle = Units.degreesToRadians(0); // This should be good, right?
-    public static double gearing = (20d / 1) * (72d / 28); // TODO: Make sure the intake doesn't go inside the robot
+    public static double gearing =
+        (20d / 1) * (72d / 28); // TODO: Make sure the intake doesn't go inside the robot
     public static int currentLimit = 40;
     public static final double kSupplyLimit = 40;
     public static final double kStatorLimit = 60;
 
     public static final CurrentLimitsConfigs currentConfigs =
-      new CurrentLimitsConfigs()
-        .withStatorCurrentLimit(kStatorLimit)
-        .withSupplyCurrentLimit(kSupplyLimit)
-        .withStatorCurrentLimitEnable(true)
-        .withSupplyCurrentLimitEnable(true)
-        .withSupplyCurrentLowerLimit(kSupplyLimit)
-        .withSupplyCurrentLowerTime(0);
-    
-    /** 
-    * TODO: this code is a carbon copy from intake 
-    * so make sure this actually makes the motor work
-    * as intended
-    */
-      public static Slot0Configs kPivotSlot0 =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(kStatorLimit)
+            .withSupplyCurrentLimit(kSupplyLimit)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true)
+            .withSupplyCurrentLowerLimit(kSupplyLimit)
+            .withSupplyCurrentLowerTime(0);
+
+    /**
+     * TODO: this code is a carbon copy from intake so make sure this actually makes the motor work
+     * as intended
+     */
+    public static Slot0Configs kPivotSlot0 =
         new Slot0Configs()
-          .withKS(0)
-          .withKV(12d / ((6380d / 60) * gearing))
-          .withKP(70)
-          .withKI(0)
-          .withKD(0);
+            .withKS(0)
+            .withKV(12d / ((6380d / 60) * gearing))
+            .withKP(70)
+            .withKI(0)
+            .withKD(0);
 
     // TODO: same here
     public static MotionMagicConfigs kPivotMotionMagicConfig =
-      new MotionMagicConfigs()
-          .withMotionMagicCruiseVelocity(Units.degreesToRotations(400))
-          .withMotionMagicAcceleration(Units.degreesToRotations(1200));
-
+        new MotionMagicConfigs()
+            .withMotionMagicCruiseVelocity(Units.degreesToRotations(400))
+            .withMotionMagicAcceleration(Units.degreesToRotations(1200));
   }
 }

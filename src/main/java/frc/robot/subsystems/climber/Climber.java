@@ -4,10 +4,9 @@
 
 package frc.robot.subsystems.climber;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj2.command.Command;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
 
@@ -18,20 +17,9 @@ public class Climber extends SubsystemBase {
     this.io = io;
   }
 
-  public Command changeSetpoint(double angleDegrees) {
-    return this.runOnce(
-        () ->
-            io.changeSetpoint(
-                MathUtil.clamp(
-                    angleDegrees, Constants.Climber.minAngle, Constants.Climber.maxAngle)));
-  }
-
-  public boolean atSetpoint() {
-    return inputs.atSetpoint;
-  }
-
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    io.updateInputs(inputs);
+    Logger.processInputs("Climber", inputs);
   }
 }

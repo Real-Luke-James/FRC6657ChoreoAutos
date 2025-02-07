@@ -25,9 +25,7 @@ public class ClimberIO_Real implements ClimberIO {
   RelativeEncoder climberEncoder;
 
   // PID Controller
-  private ProfiledPIDController climberPID =
-    new ProfiledPIDController(
-      0, 0, 0, new Constraints(Units.degreesToRadians(50), Units.degreesToRadians(50)));
+  private ProfiledPIDController climberPID = new ProfiledPIDController(0, 0, 0, new Constraints(Units.degreesToRadians(50), Units.degreesToRadians(50)));
   
   // store/log setpoints
   @AutoLogOutput(key = "Climber/Angle Setpoint")
@@ -46,13 +44,6 @@ public class ClimberIO_Real implements ClimberIO {
     mConfig.smartCurrentLimit(Constants.Climber.currentLimit);
     mConfig.idleMode(IdleMode.kBrake);
     climberMotor.configure(mConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    // here if needed, otherwise delete
-    // status signals
-    // var velocitySignal = climberEncoder.getVelocity();
-    // var tempSignal = climberMotor.getMotorTemperature();
-    // var voltageSignal = climberMotor.getBusVoltage();
-    // var currentSignal = climberMotor.getOutputCurrent();
-    // feed PID
     changeSetpoint(Constants.Climber.minAngle);
   }
 
