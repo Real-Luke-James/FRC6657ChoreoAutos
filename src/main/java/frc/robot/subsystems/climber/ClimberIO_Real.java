@@ -24,7 +24,7 @@ public class ClimberIO_Real implements ClimberIO {
   RelativeEncoder climberEncoder;
 
   // PID Controller
-  private PIDController climberPID = new PIDController(0, 0, 0);
+  private PIDController climberPID = new PIDController(0, 0, 0); // TODO Tune
   
   // store/log setpoints
   @AutoLogOutput(key = "Climber/Angle Setpoint")
