@@ -325,8 +325,8 @@ public class Constants {
   }
 
   public static final class Climber {
-    public static double maxAngle = Units.degreesToRadians(90); // TODO: Verify
-    public static double minAngle = Units.degreesToRadians(0); // This should be good, right?
+    public static double maxRotations = 90; // TODO: Verify
+    public static double minRotations = 0; // This should be good, right?
     public static double gearing =
         (20d / 1) * (72d / 28); // TODO: Make sure the intake doesn't go inside the robot
     public static int currentLimit = 40;
