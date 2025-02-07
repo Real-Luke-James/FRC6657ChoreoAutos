@@ -53,7 +53,6 @@ public class IntakeIO_Real implements IntakeIO {
     // Configure the leading roller motor
     var rollerConfigurator = rollerMotor.getConfigurator();
     var rollerConfigs = new TalonFXConfiguration();
-    rollerConfigs.Feedback.SensorToMechanismRatio = 1.0 / Constants.Intake.rollerGearing;
     rollerConfigs.CurrentLimits = Constants.Intake.kRollersCurrentConfigs;
     rollerConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     rollerConfigurator.apply(rollerConfigs);
