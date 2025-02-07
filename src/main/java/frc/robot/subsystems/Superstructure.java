@@ -187,10 +187,7 @@ public class Superstructure {
 
     I2_P3
         .atTime("Score")
-        .onTrue(
-            Commands.sequence(
-              ReefAlgin("Right", 4).asProxy(), 
-              ScoreCoral().asProxy()));
+        .onTrue(Commands.sequence(ReefAlgin("Right", 4).asProxy(), ScoreCoral().asProxy()));
 
     routine.active().onTrue(Commands.sequence(S_P1.resetOdometry(), S_P1.cmd()));
 
