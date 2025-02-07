@@ -32,10 +32,10 @@ public class IntakeIO_Sim implements IntakeIO {
   private DCMotorSim rollerSim =
       new DCMotorSim(
           LinearSystemId.createDCMotorSystem(
-              DCMotor.getFalcon500(1), 0.0001, 1d / Constants.Intake.rollerGearing),
+              DCMotor.getFalcon500(1), 0.0001, Constants.Intake.rollerGearing),
           DCMotor.getFalcon500(1));
 
-  private PIDController pivotPID = new PIDController(10, 0, 0);
+  private PIDController pivotPID = new PIDController(96d / 360, 0, 0);
 
   public IntakeIO_Sim() {
     pivotSim.setState(Units.degreesToRadians(Constants.Intake.minAngle), 0);

@@ -9,7 +9,15 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkMax;
+import frc.robot.Constants;
+import org.littletonrobotics.junction.AutoLogOutput;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -50,27 +58,27 @@ public class IntakeIO_Real implements IntakeIO {
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
-    // Configure the leading roller motor
-    var rollerConfigurator = rollerMotor.getConfigurator();
-    var rollerConfigs = new TalonFXConfiguration();
-    rollerConfigs.Feedback.SensorToMechanismRatio = 1.0 / Constants.Intake.rollerGearing;
-    rollerConfigs.CurrentLimits = Constants.Intake.kRollersCurrentConfigs;
-    rollerConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    rollerConfigurator.apply(rollerConfigs);
-    rollerMotor.setNeutralMode(NeutralModeValue.Brake);
-
-    // Roller Status Signals
-    var rollerVelocitySignal = rollerMotor.getVelocity();
-    var rollerTempSignal = rollerMotor.getDeviceTemp();
-    var rollerVoltageSignal = rollerMotor.getMotorVoltage();
-    var rollerCurrentSignal = rollerMotor.getSupplyCurrent();
-
-    rollerVelocitySignal.setUpdateFrequency(Constants.mainLoopFrequency);
-    rollerTempSignal.setUpdateFrequency(Constants.mainLoopFrequency / 4);
-    rollerVoltageSignal.setUpdateFrequency(Constants.mainLoopFrequency);
-    rollerCurrentSignal.setUpdateFrequency(Constants.mainLoopFrequency);
-
-    rollerMotor.optimizeBusUtilization(); // Reduces CAN bus usage
+     // Configure the leading roller motor
+     var rollerConfigurator = rollerMotor.getConfigurator();
+     var rollerConfigs = new TalonFXConfiguration();
+     rollerConfigs.Feedback.SensorToMechanismRatio = 1.0 / Constants.Intake.rollerGearing;
+     rollerConfigs.CurrentLimits = Constants.Intake.kRollersCurrentConfigs;
+     rollerConfigs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+     rollerConfigurator.apply(rollerConfigs);
+     rollerMotor.setNeutralMode(NeutralModeValue.Brake);
+ 
+     // Roller Status Signals
+     var rollerVelocitySignal = rollerMotor.getVelocity();
+     var rollerTempSignal = rollerMotor.getDeviceTemp();
+     var rollerVoltageSignal = rollerMotor.getMotorVoltage();
+     var rollerCurrentSignal = rollerMotor.getSupplyCurrent();
+ 
+     rollerVelocitySignal.setUpdateFrequency(Constants.mainLoopFrequency);
+     rollerTempSignal.setUpdateFrequency(Constants.mainLoopFrequency / 4);
+     rollerVoltageSignal.setUpdateFrequency(Constants.mainLoopFrequency);
+     rollerCurrentSignal.setUpdateFrequency(Constants.mainLoopFrequency);
+ 
+     rollerMotor.optimizeBusUtilization(); // Reduces CAN bus usage
 
     // Feed the PID with default values
     changePivotSetpoint(Constants.Intake.minAngle);

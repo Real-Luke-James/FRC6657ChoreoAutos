@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -133,21 +134,45 @@ public class Swerve extends SubsystemBase {
     }
   }
 
+  public boolean atPose(Pose2d desiredPose) {
+    double translationTolerance = Units.inchesToMeters(1);
+    double rotationTolerance = Units.degreesToRadians(3);
+
+    Pose2d currentPose = getPose();
+
+    return currentPose.getTranslation().getDistance(desiredPose.getTranslation())
+            < translationTolerance
+        && Math.abs(currentPose.getRotation().getRadians() - desiredPose.getRotation().getRadians())
+            < rotationTolerance;
+  }
+
+  public Command goToPose(Supplier<Pose2d> target) {
+    return this.run(
+            () -> {
+              Logger.recordOutput("Swerve/PositioningMode", "PID");
+              positionController(target.get());
+            })
+        .until(() -> atPose(target.get()))
+        .andThen(Commands.runOnce(() -> this.driveChassisSpeeds(new ChassisSpeeds())));
+  }
+
   public Command repulsorCommand(Supplier<Pose2d> target) {
     return this.run(
-        () -> {
-          Logger.recordOutput("Swerve/Repulsor/EndGoal", target.get());
-          // Check if we are within 1 meter of the end goal
-          if (getPose().getTranslation().getDistance(target.get().getTranslation()) < 1) {
-            Logger.recordOutput("Swerve/PositioningMode", "PID");
-            positionController(target.get());
-          } else {
-            Logger.recordOutput("Swerve/PositioningMode", "Repulsor");
-            repulsor.setGoal(target.get().getTranslation());
-            repulsorController(
-                getPose(), repulsor.getCmd(getPose(), getCurrentFieldRelativeSpeeds(), 2, true));
-          }
-        });
+            () -> {
+              Logger.recordOutput("Swerve/Repulsor/EndGoal", target.get());
+              // Check if we are within 1 meter of the end goal
+              if (getPose().getTranslation().getDistance(target.get().getTranslation()) < 1) {
+                Logger.recordOutput("Swerve/PositioningMode", "PID");
+                positionController(target.get());
+              } else {
+                Logger.recordOutput("Swerve/PositioningMode", "Repulsor");
+                repulsor.setGoal(target.get().getTranslation());
+                repulsorController(
+                    getPose(),
+                    repulsor.getCmd(getPose(), getCurrentFieldRelativeSpeeds(), 2, true));
+              }
+            })
+        .until(() -> atPose(target.get()));
   }
 
   public void positionController(Pose2d targetPose) {
