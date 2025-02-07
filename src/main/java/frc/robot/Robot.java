@@ -28,6 +28,9 @@ import frc.robot.subsystems.drivebase.Swerve;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.elevator.ElevatorIO_Real;
 import frc.robot.subsystems.elevator.ElevatorIO_Sim;
+import frc.robot.subsystems.climber.ClimberIO_Real;
+import frc.robot.subsystems.climber.ClimberIO_Sim;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.intake.IntakeIO_Real;
 import frc.robot.subsystems.intake.IntakeIO_Sim;
@@ -51,6 +54,7 @@ public class Robot extends LoggedRobot {
   private Elevator elevator;
   private Outtake outtake;
   private Intake intake;
+  private Climber climber;
 
   private ApriltagCamera[] cameras;
 
@@ -81,6 +85,7 @@ public class Robot extends LoggedRobot {
     elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
     outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
     intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
+    climber = new Climber(RobotBase.isReal() ? new ClimberIO_Real() : new ClimberIO_Sim());
 
     // cameras =
     //     new ApriltagCamera[] {
@@ -101,7 +106,7 @@ public class Robot extends LoggedRobot {
     //           VisionConstants.camera3Info)
     //     };
 
-    superstructure = new Superstructure(drivebase, elevator, outtake, intake);
+    superstructure = new Superstructure(drivebase, elevator, outtake, intake, climber);
 
     autoFactory =
         new AutoFactory(

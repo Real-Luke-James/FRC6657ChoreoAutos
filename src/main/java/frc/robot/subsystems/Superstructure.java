@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Constants.FieldConstants.ReefSlot;
+import frc.robot.subsystems.climber.Climber;
 import frc.robot.subsystems.drivebase.Swerve;
 import frc.robot.subsystems.elevator.Elevator;
 import frc.robot.subsystems.intake.Intake;
@@ -28,6 +29,7 @@ public class Superstructure {
   Elevator elevator;
   Outtake outtake;
   Intake intake;
+  Climber climber;
 
   @AutoLogOutput(key = "States/Selected Reef")
   private String selectedReef = "Left"; // Selected Reef Pole
@@ -40,11 +42,12 @@ public class Superstructure {
   }; // Array for easily grabbing setpoint heights.
 
   // Constructor
-  public Superstructure(Swerve drivebase, Elevator elevator, Outtake outtake, Intake intake) {
+  public Superstructure(Swerve drivebase, Elevator elevator, Outtake outtake, Intake intake, Climber climber) {
     this.drivebase = drivebase;
     this.elevator = elevator;
     this.outtake = outtake;
     this.intake = intake;
+    this.climber = climber;
   }
 
   /*
