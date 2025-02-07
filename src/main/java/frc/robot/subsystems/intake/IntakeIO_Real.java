@@ -13,6 +13,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.EncoderConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
@@ -52,7 +53,7 @@ public class IntakeIO_Real implements IntakeIO {
         new SparkMaxConfig()
             .apply(new EncoderConfig().positionConversionFactor(1d / Constants.Intake.pivotGearing))
             .smartCurrentLimit(40)
-            .idleMode(IdleMode.kBrake),
+            .idleMode(IdleMode.kCoast),
         ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
 
