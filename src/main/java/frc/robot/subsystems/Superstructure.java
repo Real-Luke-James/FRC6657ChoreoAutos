@@ -30,10 +30,8 @@ public class Superstructure {
   Outtake outtake;
   Intake intake;
 
-  @AutoLogOutput(key = "States/Selected Reef")
   private String selectedReef = "Left"; // Selected Reef Pole
 
-  @AutoLogOutput(key = "States/Elevator Level")
   private int elevatorLevel = 2; // Selected Reef Level
 
   private double[] elevatorSetpoints = {
@@ -62,6 +60,7 @@ public class Superstructure {
   }
 
   // Gets the closest reef sector to the robot.
+  @AutoLogOutput(key = "Auto Align Pose")
   public Pose2d getNearestReef() {
 
     // Grab the alliance color
@@ -126,7 +125,11 @@ public class Superstructure {
 
   // Simple command to change the selected reef pole.
   public Command selectReef(String reef) {
-    return Commands.runOnce(() -> selectedReef = reef);
+    System.out.println("Selected Reef: " + reef);
+    return Commands.runOnce(
+        () -> {
+          this.selectedReef = reef;
+        });
   }
 
   public Command raiseElevator() {
@@ -160,34 +163,55 @@ public class Superstructure {
   }
 
   // Simple Test Auto that just runs a path.
-  public AutoRoutine testAuto(AutoFactory factory) {
+  public AutoRoutine testAuto(AutoFactory factory, boolean mirror) {
 
-    final AutoRoutine routine = factory.newRoutine("Test");
+    final AutoRoutine routine = factory.newRoutine("Test 3 Piece");
 
-    final AutoTrajectory S_P1 = routine.trajectory("Test 3 Piece", 0);
-    final AutoTrajectory P1_I1 = routine.trajectory("Test 3 Piece", 1);
-    final AutoTrajectory I1_P2 = routine.trajectory("Test 3 Piece", 2);
-    final AutoTrajectory P2_I2 = routine.trajectory("Test 3 Piece", 3);
-    final AutoTrajectory I2_P3 = routine.trajectory("Test 3 Piece", 4);
+    String mirrorFlag = mirror ? "mirrored_" : "";
+
+    final AutoTrajectory S_P1 = routine.trajectory(mirrorFlag + "Test 3 Piece", 0);
+    final AutoTrajectory P1_I1 = routine.trajectory(mirrorFlag + "Test 3 Piece", 1);
+    final AutoTrajectory I1_P2 = routine.trajectory(mirrorFlag + "Test 3 Piece", 2);
+    final AutoTrajectory P2_I2 = routine.trajectory(mirrorFlag + "Test 3 Piece", 3);
+    final AutoTrajectory I2_P3 = routine.trajectory(mirrorFlag + "Test 3 Piece", 4);
 
     S_P1.atTime("Score")
         .onTrue(
             Commands.sequence(
-                ReefAlgin("Left", 4).asProxy(),
+                ReefAlgin(mirror ? "Right" : "Left", 4).asProxy(),
                 ScoreCoral().asProxy(),
-                new ScheduleCommand(Commands.sequence(P1_I1.cmd(), I1_P2.cmd()))));
+                new ScheduleCommand(P1_I1.cmd())));
+
+    P1_I1
+        .done()
+        .onTrue(
+            Commands.sequence(
+                outtake.changeRollerSetpoint(-0.5).asProxy(),
+                Commands.waitUntil(outtake::coralDetected).withTimeout(3).asProxy(),
+                new ScheduleCommand(I1_P2.cmd())));
 
     I1_P2
         .atTime("Score")
         .onTrue(
             Commands.sequence(
-                ReefAlgin("Left", 4).asProxy(),
+                ReefAlgin(mirror ? "Right" : "Left", 4).asProxy(),
                 ScoreCoral().asProxy(),
-                new ScheduleCommand(Commands.sequence(P2_I2.cmd(), I2_P3.cmd()))));
+                new ScheduleCommand(P2_I2.cmd())));
+
+    P2_I2
+        .done()
+        .onTrue(
+            Commands.sequence(
+                outtake.changeRollerSetpoint(-0.5).asProxy(),
+                Commands.waitUntil(outtake::coralDetected).withTimeout(3).asProxy(),
+                new ScheduleCommand(I2_P3.cmd())));
 
     I2_P3
         .atTime("Score")
-        .onTrue(Commands.sequence(ReefAlgin("Right", 4).asProxy(), ScoreCoral().asProxy()));
+        .onTrue(
+            Commands.sequence(
+                ReefAlgin(mirror ? "Left" : "Right", 4).asProxy(), ScoreCoral().asProxy()));
+
 
     routine.active().onTrue(Commands.sequence(S_P1.resetOdometry(), S_P1.cmd()));
 

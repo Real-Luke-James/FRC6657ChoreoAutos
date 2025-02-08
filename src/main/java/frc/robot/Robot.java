@@ -5,12 +5,15 @@
 package frc.robot;
 
 import choreo.auto.AutoFactory;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -37,6 +40,7 @@ import frc.robot.subsystems.outtake.OuttakeIO_Sim;
 import frc.robot.subsystems.vision.ApriltagCamera;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
@@ -47,7 +51,6 @@ public class Robot extends LoggedRobot {
 
   private Swerve drivebase;
 
-  // private Intake intake;
   private Elevator elevator;
   private Outtake outtake;
   private Intake intake;
@@ -57,6 +60,9 @@ public class Robot extends LoggedRobot {
   private Superstructure superstructure;
 
   private final AutoFactory autoFactory;
+
+  private LoggedDashboardChooser<Command> autoChooser =
+      new LoggedDashboardChooser<>("Auto Chooser");
 
   public Robot() {
 
@@ -77,10 +83,9 @@ public class Robot extends LoggedRobot {
                 },
             RobotBase.isReal() ? new GyroIO_Real() : new GyroIO() {});
 
-    // intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
+    intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
     elevator = new Elevator(RobotBase.isReal() ? new ElevatorIO_Real() : new ElevatorIO_Sim());
     outtake = new Outtake(RobotBase.isReal() ? new OuttakeIO_Real() : new OuttakeIO_Sim());
-    intake = new Intake(RobotBase.isReal() ? new IntakeIO_Real() : new IntakeIO_Sim());
 
     // cameras =
     //     new ApriltagCamera[] {
@@ -110,6 +115,10 @@ public class Robot extends LoggedRobot {
             drivebase::followTrajectory,
             true,
             drivebase);
+
+    autoChooser.addDefaultOption("None", Commands.print("No Auto Selected"));
+    autoChooser.addOption("Test Auto", superstructure.testAuto(autoFactory, false).cmd());
+    autoChooser.addOption("Test Auto Mirror", superstructure.testAuto(autoFactory, true).cmd());
   }
 
   @SuppressWarnings("resource")
@@ -144,14 +153,44 @@ public class Robot extends LoggedRobot {
 
     // driver.a().whileTrue(drivebase.goToPose(() -> superstructure.getNearestReef()));
 
-    driver.povLeft().onTrue(Commands.runOnce(() -> superstructure.selectReef("Left")));
-    driver.povRight().onTrue(Commands.runOnce(() -> superstructure.selectReef("Right")));
+    driver.povLeft().onTrue(superstructure.selectReef("Left"));
+    driver.povRight().onTrue(superstructure.selectReef("Right"));
 
     operator.button(9).onTrue(superstructure.selectElevatorHeight(2)); // button 2
     operator.button(8).onTrue(superstructure.selectElevatorHeight(3)); // button 3
     operator.button(7).onTrue(superstructure.selectElevatorHeight(4)); // button 4
 
     driver.b().onTrue(superstructure.raiseElevator()).onFalse(elevator.changeSetpoint(0));
+
+    driver // Coral Pickup
+        .leftTrigger()
+        .onTrue(
+            Commands.sequence(
+                intake.changePivotSetpoint(Units.degreesToRadians(2)),
+                intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed)))
+        .onFalse(
+            Commands.sequence(
+                intake.changePivotSetpoint(Constants.Intake.maxAngle),
+                intake.changeRollerSpeed(0)));
+
+    driver // Algae Pickup
+        .leftBumper()
+        .onTrue(
+            Commands.sequence(
+                intake.changePivotSetpoint(Units.degreesToRadians(50)),
+                intake.changeRollerSpeed(Constants.Intake.kGroundIntakeSpeed)))
+        .onFalse(
+            Commands.sequence(
+                intake.changePivotSetpoint(Constants.Intake.maxAngle),
+                intake.changeRollerSpeed(0)));
+
+    driver
+        .rightBumper()
+        .onTrue(intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed))
+        .onFalse(
+            Commands.sequence(
+                intake.changePivotSetpoint(Constants.Intake.maxAngle),
+                intake.changeRollerSpeed(0)));
 
     Logger.start();
   }
@@ -181,8 +220,6 @@ public class Robot extends LoggedRobot {
         "ReefCam Pose3",
         new Pose3d(drivebase.getPose()).transformBy(VisionConstants.camera3Info.robotToCamera));
 
-    Logger.recordOutput("AutoAlignPos", superstructure.getNearestReef());
-
     CommandScheduler.getInstance().run();
   }
 
@@ -190,7 +227,17 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {}
 
   @Override
+  public void disabledInit() {
+    intake.changePivotIdlemode(IdleMode.kCoast);
+  }
+
+  @Override
+  public void disabledExit() {
+    intake.changePivotIdlemode(IdleMode.kBrake);
+  }
+
+  @Override
   public void autonomousInit() {
-    superstructure.testAuto(autoFactory).cmd().schedule();
+    autoChooser.get().schedule();
   }
 }
