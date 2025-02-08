@@ -151,7 +151,7 @@ public class Constants {
 
     public static CameraInfo camera1Info =
         new CameraInfo(
-            "Camera1",
+            "White_Reef",
             new Transform3d(
                 new Translation3d(-0.320048, -0.300306, 0.299816),
                 new Rotation3d(0, Units.degreesToRadians(0), Math.PI - Units.degreesToRadians(55))),
@@ -160,17 +160,17 @@ public class Constants {
 
     public static CameraInfo camera2Info =
         new CameraInfo(
-            "Camera2",
+            "Black_Reef",
             new Transform3d(
                 new Translation3d(
                     Units.inchesToMeters(3), Units.inchesToMeters(4), Units.inchesToMeters(9)),
                 new Rotation3d(0, Units.degreesToRadians(0), Math.PI + Units.degreesToRadians(20))),
             Rotation2d.fromDegrees(95),
-            new int[] {1280, 800});
+            new int[] {1600, 1200});
 
     public static CameraInfo camera3Info =
         new CameraInfo(
-            "Camera3",
+            "Black_Station",
             new Transform3d(
                 new Translation3d(
                     Units.inchesToMeters(7), Units.inchesToMeters(4.1), Units.inchesToMeters(9)),
@@ -178,8 +178,7 @@ public class Constants {
             Rotation2d.fromDegrees(95),
             new int[] {1280, 800});
 
-    public static final Matrix<N3, N1> singleTagStdDev =
-        VecBuilder.fill(0.4, 0.4, Double.MAX_VALUE);
+    public static final Matrix<N3, N1> singleTagStdDev = VecBuilder.fill(0.4, 0.4, Double.MAX_VALUE);
     public static final Matrix<N3, N1> multiTagStdDev = VecBuilder.fill(0.2, 0.2, Double.MAX_VALUE);
   }
 

@@ -85,8 +85,7 @@ public class IntakeIO_Real implements IntakeIO {
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
 
-    double pidOutput =
-        pivotPID.calculate(Units.rotationsToRadians(inputs.encoderAbsPosition), angleSetpoint);
+    double pidOutput = pivotPID.calculate(Units.rotationsToRadians(inputs.encoderAbsPosition), angleSetpoint);
     pivotMotor.setVoltage(pidOutput);
 
     rollerMotor.set(speedSetpoint);
@@ -109,6 +108,7 @@ public class IntakeIO_Real implements IntakeIO {
     inputs.rollerMotorSetpoint = speedSetpoint;
 
     Logger.recordOutput("Intake/PivotPIDOutput", pidOutput);
+    Logger.recordOutput("Intake/PivotPIDProfileSetpoint", pivotPID.getSetpoint().position);
   }
 
   @Override
