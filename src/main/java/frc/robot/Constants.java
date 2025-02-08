@@ -178,7 +178,8 @@ public class Constants {
             Rotation2d.fromDegrees(95),
             new int[] {1280, 800});
 
-    public static final Matrix<N3, N1> singleTagStdDev = VecBuilder.fill(0.4, 0.4, Double.MAX_VALUE);
+    public static final Matrix<N3, N1> singleTagStdDev =
+        VecBuilder.fill(0.4, 0.4, Double.MAX_VALUE);
     public static final Matrix<N3, N1> multiTagStdDev = VecBuilder.fill(0.2, 0.2, Double.MAX_VALUE);
   }
 
@@ -247,8 +248,8 @@ public class Constants {
   public static class Intake {
 
     public static double pivotGearing = (60d / 1) * (72d / 28);
-    public static double maxAngle = Units.degreesToRadians(117);
-    public static double minAngle = Units.degreesToRadians(0);
+    public static double maxAngle = Units.degreesToRadians(115);
+    public static double minAngle = Units.degreesToRadians(2);
 
     public static final double kPivotSupplyLimit = 40;
     public static final double kRollersCurrentLimit = 30;

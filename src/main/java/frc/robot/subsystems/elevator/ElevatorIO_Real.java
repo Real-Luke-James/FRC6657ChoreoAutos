@@ -120,7 +120,8 @@ public class ElevatorIO_Real implements ElevatorIO {
 
       // Logging for motion magic internal variables for tuning purposes.
       Logger.recordOutput("Elevator/MotionMagicPosition", motionMagicVoltage.Position);
-      Logger.recordOutput("Elevator/MotionMagicSetpoint", leaderMotor.getClosedLoopReference().getValueAsDouble());
+      Logger.recordOutput(
+          "Elevator/MotionMagicSetpoint", leaderMotor.getClosedLoopReference().getValueAsDouble());
     }
   }
 

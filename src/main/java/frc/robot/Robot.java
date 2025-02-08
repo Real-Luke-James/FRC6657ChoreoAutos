@@ -162,10 +162,35 @@ public class Robot extends LoggedRobot {
 
     driver.b().onTrue(superstructure.raiseElevator()).onFalse(elevator.changeSetpoint(0));
 
-    driver
+    driver // Coral Pickup
         .leftTrigger()
-        .onTrue(intake.changePivotSetpoint(Units.degreesToRadians(30)))
-        .onFalse(intake.changePivotSetpoint(Units.degreesToRadians(0)));
+        .onTrue(
+            Commands.sequence(
+                intake.changePivotSetpoint(Units.degreesToRadians(2)),
+                intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed)))
+        .onFalse(
+            Commands.sequence(
+                intake.changePivotSetpoint(Constants.Intake.maxAngle),
+                intake.changeRollerSpeed(0)));
+
+    driver // Algae Pickup
+        .leftBumper()
+        .onTrue(
+            Commands.sequence(
+                intake.changePivotSetpoint(Units.degreesToRadians(50)),
+                intake.changeRollerSpeed(Constants.Intake.kGroundIntakeSpeed)))
+        .onFalse(
+            Commands.sequence(
+                intake.changePivotSetpoint(Constants.Intake.maxAngle),
+                intake.changeRollerSpeed(0)));
+
+    driver
+        .rightBumper()
+        .onTrue(intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed))
+        .onFalse(
+            Commands.sequence(
+                intake.changePivotSetpoint(Constants.Intake.maxAngle),
+                intake.changeRollerSpeed(0)));
 
     Logger.start();
   }

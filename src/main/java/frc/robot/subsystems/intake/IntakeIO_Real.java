@@ -33,14 +33,14 @@ public class IntakeIO_Real implements IntakeIO {
 
   // Variables to store/log the setpoints
   @AutoLogOutput(key = "Intake/AngleSetpoint")
-  private double angleSetpoint = Constants.Intake.minAngle;
+  private double angleSetpoint = Constants.Intake.maxAngle;
 
   @AutoLogOutput(key = "Intake/SpeedSetpoint")
   private double speedSetpoint = 0;
 
   private ProfiledPIDController pivotPID =
       new ProfiledPIDController(
-          0, 0, 0, new Constraints(Units.degreesToRadians(50), Units.degreesToRadians(50)));
+          9, 0, 0, new Constraints(Units.degreesToRadians(700), Units.degreesToRadians(700)));
 
   public IntakeIO_Real() {
 
@@ -78,17 +78,13 @@ public class IntakeIO_Real implements IntakeIO {
     rollerMotor.optimizeBusUtilization(); // Reduces CAN bus usage
 
     // Feed the PID with default values
-    changePivotSetpoint(Constants.Intake.minAngle);
+    changePivotSetpoint(Constants.Intake.maxAngle);
     changeRollerSpeed(0);
+    // pivotPID.setGoal(angleSetpoint);
   }
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
-
-    double pidOutput = pivotPID.calculate(Units.rotationsToRadians(inputs.encoderAbsPosition), angleSetpoint);
-    pivotMotor.setVoltage(pidOutput);
-
-    rollerMotor.set(speedSetpoint);
 
     inputs.encoderAbsPosition = Units.rotationsToRadians(encoder.getAbsPosition());
     inputs.encoderRelPosition = Units.rotationsToRadians(encoder.getPosition());
@@ -106,6 +102,11 @@ public class IntakeIO_Real implements IntakeIO {
     inputs.rollerMotorVoltage = rollerMotor.get() * RobotController.getBatteryVoltage();
     inputs.rollerMotorCurrent = rollerMotor.getSupplyCurrent().getValueAsDouble();
     inputs.rollerMotorSetpoint = speedSetpoint;
+
+    double pidOutput = -pivotPID.calculate(inputs.encoderAbsPosition, angleSetpoint);
+    pivotMotor.setVoltage(pidOutput);
+
+    rollerMotor.set(speedSetpoint);
 
     Logger.recordOutput("Intake/PivotPIDOutput", pidOutput);
     Logger.recordOutput("Intake/PivotPIDProfileSetpoint", pivotPID.getSetpoint().position);
