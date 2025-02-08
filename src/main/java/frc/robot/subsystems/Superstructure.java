@@ -175,7 +175,15 @@ public class Superstructure {
             Commands.sequence(
                 ReefAlgin("Left", 4).asProxy(),
                 ScoreCoral().asProxy(),
-                new ScheduleCommand(Commands.sequence(P1_I1.cmd(), I1_P2.cmd()))));
+                new ScheduleCommand(P1_I1.cmd())));
+
+    P1_I1
+        .done()
+        .onTrue(
+            Commands.sequence(
+                outtake.changeRollerSetpoint(-0.5).asProxy(),
+                Commands.waitUntil(outtake::coralDetected).withTimeout(3).asProxy(),
+                new ScheduleCommand(I1_P2.cmd())));
 
     I1_P2
         .atTime("Score")
@@ -183,7 +191,16 @@ public class Superstructure {
             Commands.sequence(
                 ReefAlgin("Left", 4).asProxy(),
                 ScoreCoral().asProxy(),
-                new ScheduleCommand(Commands.sequence(P2_I2.cmd(), I2_P3.cmd()))));
+                new ScheduleCommand(P2_I2.cmd())));
+
+    P2_I2
+      .done()
+        .onTrue(
+            Commands.sequence(
+                outtake.changeRollerSetpoint(-0.5).asProxy(),
+                Commands.waitUntil(outtake::coralDetected).withTimeout(3).asProxy(),
+                new ScheduleCommand(I2_P3.cmd())
+              ));
 
     I2_P3
         .atTime("Score")
