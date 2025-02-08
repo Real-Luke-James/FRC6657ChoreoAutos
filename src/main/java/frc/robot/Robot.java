@@ -13,6 +13,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -39,6 +40,7 @@ import frc.robot.subsystems.outtake.OuttakeIO_Sim;
 import frc.robot.subsystems.vision.ApriltagCamera;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
@@ -58,6 +60,9 @@ public class Robot extends LoggedRobot {
   private Superstructure superstructure;
 
   private final AutoFactory autoFactory;
+
+  private LoggedDashboardChooser<Command> autoChooser =
+      new LoggedDashboardChooser<>("Auto Chooser");
 
   public Robot() {
 
@@ -110,6 +115,10 @@ public class Robot extends LoggedRobot {
             drivebase::followTrajectory,
             true,
             drivebase);
+
+    autoChooser.addDefaultOption("None", Commands.print("No Auto Selected"));
+    autoChooser.addOption("Test Auto", superstructure.testAuto(autoFactory, false).cmd());
+    autoChooser.addOption("Test Auto Mirror", superstructure.testAuto(autoFactory, true).cmd());
   }
 
   @SuppressWarnings("resource")
@@ -144,8 +153,8 @@ public class Robot extends LoggedRobot {
 
     // driver.a().whileTrue(drivebase.goToPose(() -> superstructure.getNearestReef()));
 
-    driver.povLeft().onTrue(Commands.runOnce(() -> superstructure.selectReef("Left")));
-    driver.povRight().onTrue(Commands.runOnce(() -> superstructure.selectReef("Right")));
+    driver.povLeft().onTrue(superstructure.selectReef("Left"));
+    driver.povRight().onTrue(superstructure.selectReef("Right"));
 
     operator.button(9).onTrue(superstructure.selectElevatorHeight(2)); // button 2
     operator.button(8).onTrue(superstructure.selectElevatorHeight(3)); // button 3
@@ -186,8 +195,6 @@ public class Robot extends LoggedRobot {
         "ReefCam Pose3",
         new Pose3d(drivebase.getPose()).transformBy(VisionConstants.camera3Info.robotToCamera));
 
-    Logger.recordOutput("AutoAlignPos", superstructure.getNearestReef());
-
     CommandScheduler.getInstance().run();
   }
 
@@ -206,6 +213,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    superstructure.testAuto(autoFactory).cmd().schedule();
+    autoChooser.get().schedule();
   }
 }
