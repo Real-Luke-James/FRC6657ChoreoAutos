@@ -155,7 +155,7 @@ public class Constants {
             new Transform3d(
                 new Translation3d(-0.320048, -0.300306, 0.299816),
                 new Rotation3d(0, Units.degreesToRadians(0), Math.PI - Units.degreesToRadians(55))),
-            Rotation2d.fromDegrees(95),
+            Rotation2d.fromDegrees(79.19),
             new int[] {1280, 800});
 
     public static CameraInfo camera2Info =

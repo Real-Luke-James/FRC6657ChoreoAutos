@@ -71,9 +71,16 @@ public class Swerve extends SubsystemBase {
     return Commands.run(
         () -> {
           Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
-          this.driveChassisSpeeds(
-              ChassisSpeeds.fromFieldRelativeSpeeds(
-                  fieldRelativeSpeeds.get(), getPose().getRotation().times(-1)));
+          Rotation2d rotation = new Rotation2d(getPose().getRotation().getRadians());
+          if (alliance == Alliance.Red) {
+            fieldRelativeSpeeds.get().vxMetersPerSecond *= -1;
+            fieldRelativeSpeeds.get().vyMetersPerSecond *= -1;
+            rotation = rotation.rotateBy(Rotation2d.fromDegrees(180));
+          }
+
+          this.driveChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds.get(), rotation));
+
+          //this.driveChassisSpeeds(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds.get(), getPose().getRotation()));
         },
         this);
   }

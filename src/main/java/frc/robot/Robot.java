@@ -144,7 +144,7 @@ public class Robot extends LoggedRobot {
             () ->
                 new ChassisSpeeds(
                     MathUtil.applyDeadband(-driver.getLeftY(), 0.1) * 2,
-                    MathUtil.applyDeadband(driver.getLeftX(), 0.1) * 2,
+                    MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 2,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 2)));
 
     driver.rightTrigger().onTrue(outtake.changeRollerSetpoint(-0.4));
