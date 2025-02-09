@@ -49,9 +49,12 @@ public class OuttakeIO_Real implements OuttakeIO {
 
     inputs.kSetpoint = rollerSetpoint;
 
+    // rollerMotor.setControl(new VoltageOut(rollerSetpoint * 12));
     rollerMotor.setControl(new VoltageOut(rollerSetpoint * 12));
   }
 
   @Override
-  public void changeSetpoint(double setpoint) {}
+  public void changeSetpoint(double setpoint) {
+    rollerSetpoint = setpoint;
+  }
 }

@@ -212,7 +212,6 @@ public class Superstructure {
             Commands.sequence(
                 ReefAlgin(mirror ? "Left" : "Right", 4).asProxy(), ScoreCoral().asProxy()));
 
-
     routine.active().onTrue(Commands.sequence(S_P1.resetOdometry(), S_P1.cmd()));
 
     return routine;

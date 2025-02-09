@@ -248,14 +248,14 @@ public class Constants {
   public static class Intake {
 
     public static double pivotGearing = (60d / 1) * (72d / 28);
-    public static double maxAngle = Units.degreesToRadians(115);
-    public static double minAngle = Units.degreesToRadians(2);
+    public static double maxAngle = Units.degreesToRadians(124);
+    public static double minAngle = Units.degreesToRadians(10);
 
     public static final double kPivotSupplyLimit = 40;
     public static final double kRollersCurrentLimit = 30;
 
     public static final double kGroundIntakeSpeed = 0.7;
-    public static final double kFeedSpeed = -0.25;
+    public static final double kFeedSpeed = 0.25;
 
     public static final double pivotAtSetpointTolerance = 2.0; // degrees
 
@@ -296,10 +296,10 @@ public class Constants {
     public static Slot0Configs motorSlot0 =
         new Slot0Configs()
             .withKS(0) // Volts
-            .withKG(0) // Volts
+            .withKG(0.35) // Volts
             .withGravityType(GravityTypeValue.Elevator_Static)
             .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
-            .withKP(3.5)
+            .withKP(4.5)
             .withKI(0)
             .withKD(0);
 

@@ -7,7 +7,9 @@ package frc.robot;
 import choreo.auto.AutoFactory;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -142,13 +144,13 @@ public class Robot extends LoggedRobot {
             () ->
                 new ChassisSpeeds(
                     MathUtil.applyDeadband(-driver.getLeftY(), 0.1) * 2,
-                    MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 2,
+                    MathUtil.applyDeadband(driver.getLeftX(), 0.1) * 2,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 2)));
 
-    driver.rightTrigger().onTrue(outtake.changeRollerSetpoint(-0.5));
+    driver.rightTrigger().onTrue(outtake.changeRollerSetpoint(-0.4));
     coralDetected
         .onTrue(outtake.changeRollerSetpoint(0))
-        .onFalse(Commands.waitSeconds(0.5).andThen(outtake.changeRollerSetpoint(0)));
+        .onFalse(Commands.waitSeconds(0.3).andThen(outtake.changeRollerSetpoint(0)));
     driver.rightTrigger().onFalse(outtake.changeRollerSetpoint(0));
 
     // driver.a().whileTrue(drivebase.goToPose(() -> superstructure.getNearestReef()));
@@ -160,7 +162,14 @@ public class Robot extends LoggedRobot {
     operator.button(8).onTrue(superstructure.selectElevatorHeight(3)); // button 3
     operator.button(7).onTrue(superstructure.selectElevatorHeight(4)); // button 4
 
-    driver.b().onTrue(superstructure.raiseElevator()).onFalse(elevator.changeSetpoint(0));
+    driver
+        .y()
+        .onTrue(
+            drivebase.resetOdometry(
+                new Pose2d(
+                    drivebase.getPose().getX(), drivebase.getPose().getY(), new Rotation2d())));
+
+    driver.rightBumper().onTrue(superstructure.raiseElevator()).onFalse(elevator.changeSetpoint(0));
 
     driver // Coral Pickup
         .leftTrigger()
@@ -171,26 +180,28 @@ public class Robot extends LoggedRobot {
         .onFalse(
             Commands.sequence(
                 intake.changePivotSetpoint(Constants.Intake.maxAngle),
-                intake.changeRollerSpeed(0)));
+                intake.changeRollerSpeed(-Constants.Intake.kFeedSpeed / 1.5)));
 
     driver // Algae Pickup
         .leftBumper()
         .onTrue(
             Commands.sequence(
-                intake.changePivotSetpoint(Units.degreesToRadians(50)),
+                intake.changePivotSetpoint(Units.degreesToRadians(60)),
                 intake.changeRollerSpeed(Constants.Intake.kGroundIntakeSpeed)))
         .onFalse(
             Commands.sequence(
                 intake.changePivotSetpoint(Constants.Intake.maxAngle),
-                intake.changeRollerSpeed(0)));
+                intake.changeRollerSpeed(Constants.Intake.kFeedSpeed)));
 
     driver
-        .rightBumper()
+        .a()
         .onTrue(intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed))
         .onFalse(
             Commands.sequence(
                 intake.changePivotSetpoint(Constants.Intake.maxAngle),
                 intake.changeRollerSpeed(0)));
+
+    operator.button(1).onTrue(intake.changeRollerSpeed(0));
 
     Logger.start();
   }
