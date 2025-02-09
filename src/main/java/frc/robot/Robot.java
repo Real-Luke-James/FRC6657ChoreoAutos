@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -153,7 +154,16 @@ public class Robot extends LoggedRobot {
         .onFalse(Commands.waitSeconds(0.3).andThen(outtake.changeRollerSetpoint(0)));
     driver.rightTrigger().onFalse(outtake.changeRollerSetpoint(0));
 
-    // driver.a().whileTrue(drivebase.goToPose(() -> superstructure.getNearestReef()));
+    // driver
+    //     .a()
+    //     .whileTrue(
+    //         drivebase
+    //             .goToPose(() -> superstructure.getNearestReef())
+    //             .andThen(
+    //                 Commands.sequence(
+    //                     Commands.runOnce(() -> driver.setRumble(RumbleType.kRightRumble, 1)),
+    //                     Commands.waitSeconds(0.25),
+    //                     Commands.runOnce(() -> driver.setRumble(RumbleType.kRightRumble, 0)))));
 
     driver.povLeft().onTrue(superstructure.selectReef("Left"));
     driver.povRight().onTrue(superstructure.selectReef("Right"));
@@ -193,13 +203,13 @@ public class Robot extends LoggedRobot {
                 intake.changePivotSetpoint(Constants.Intake.maxAngle),
                 intake.changeRollerSpeed(Constants.Intake.kFeedSpeed)));
 
-    driver
-        .a()
-        .onTrue(intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed))
-        .onFalse(
-            Commands.sequence(
-                intake.changePivotSetpoint(Constants.Intake.maxAngle),
-                intake.changeRollerSpeed(0)));
+    // driver
+    //     .a()
+    //     .onTrue(intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed))
+    //     .onFalse(
+    //         Commands.sequence(
+    //             intake.changePivotSetpoint(Constants.Intake.maxAngle),
+    //             intake.changeRollerSpeed(0)));
 
     operator.button(1).onTrue(intake.changeRollerSpeed(0));
 
