@@ -165,17 +165,17 @@ public class Constants {
                 new Translation3d(
                     Units.inchesToMeters(3), Units.inchesToMeters(4), Units.inchesToMeters(9)),
                 new Rotation3d(0, Units.degreesToRadians(0), Math.PI + Units.degreesToRadians(20))),
-            Rotation2d.fromDegrees(95),
+            Rotation2d.fromDegrees(94.9),
             new int[] {1600, 1200});
 
     public static CameraInfo camera3Info =
         new CameraInfo(
-            "Black_Station",
+            "White_Station",
             new Transform3d(
                 new Translation3d(
                     Units.inchesToMeters(7), Units.inchesToMeters(4.1), Units.inchesToMeters(9)),
                 new Rotation3d(0, Units.degreesToRadians(0), 0)),
-            Rotation2d.fromDegrees(95),
+            Rotation2d.fromDegrees(79.76),
             new int[] {1280, 800});
 
     public static final Matrix<N3, N1> singleTagStdDev =
@@ -298,7 +298,6 @@ public class Constants {
             .withKS(0) // Volts
             .withKG(0.35) // Volts
             .withGravityType(GravityTypeValue.Elevator_Static)
-            .withKV(12d / ((6380d / 60) * gearing)) // Volts/Mechanism RPS
             .withKP(4.5)
             .withKI(0)
             .withKD(0);
