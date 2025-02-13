@@ -11,8 +11,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -148,11 +146,11 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 2,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 2)));
 
-    driver.rightTrigger().onTrue(outtake.changeRollerSetpoint(-0.4));
+    driver.leftTrigger().onTrue(outtake.changeRollerSetpoint(-0.4)); // Score elevator coral
     coralDetected
         .onTrue(outtake.changeRollerSetpoint(0))
         .onFalse(Commands.waitSeconds(0.3).andThen(outtake.changeRollerSetpoint(0)));
-    driver.rightTrigger().onFalse(outtake.changeRollerSetpoint(0));
+    driver.leftTrigger().onFalse(outtake.changeRollerSetpoint(0));
 
     // driver
     //     .a()
@@ -168,9 +166,19 @@ public class Robot extends LoggedRobot {
     driver.povLeft().onTrue(superstructure.selectReef("Left"));
     driver.povRight().onTrue(superstructure.selectReef("Right"));
 
+    operator
+        .button(1)
+        .onTrue(
+            intake
+                .changeRollerSpeed(0)
+                .andThen(outtake.changeRollerSetpoint(0))); // zero out rollers if needed
+
     operator.button(9).onTrue(superstructure.selectElevatorHeight(2)); // button 2
     operator.button(8).onTrue(superstructure.selectElevatorHeight(3)); // button 3
     operator.button(7).onTrue(superstructure.selectElevatorHeight(4)); // button 4
+
+    operator.button(2).onTrue(superstructure.ChangeCoralMode(true));
+    operator.button(5).onTrue(superstructure.ChangeCoralMode(false));
 
     driver
         .y()
@@ -179,30 +187,19 @@ public class Robot extends LoggedRobot {
                 new Pose2d(
                     drivebase.getPose().getX(), drivebase.getPose().getY(), new Rotation2d())));
 
-    driver.rightBumper().onTrue(superstructure.raiseElevator()).onFalse(elevator.changeSetpoint(0));
+    
 
-    driver // Coral Pickup
-        .leftTrigger()
-        .onTrue(
-            Commands.sequence(
-                intake.changePivotSetpoint(Units.degreesToRadians(2)),
-                intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed)))
-        .onFalse(
-            Commands.sequence(
-                intake.changePivotSetpoint(Constants.Intake.maxAngle),
-                intake.changeRollerSpeed(-Constants.Intake.kFeedSpeed / 1.5)));
+    driver.povUp().onTrue(superstructure.raiseElevator());
+    driver.povDown().onTrue(elevator.changeSetpoint(0));
 
-    driver // Algae Pickup
-        .leftBumper()
-        .onTrue(
-            Commands.sequence(
-                intake.changePivotSetpoint(Units.degreesToRadians(60)),
-                intake.changeRollerSpeed(Constants.Intake.kGroundIntakeSpeed)))
-        .onFalse(
-            Commands.sequence(
-                intake.changePivotSetpoint(Constants.Intake.maxAngle),
-                intake.changeRollerSpeed(Constants.Intake.kFeedSpeed)));
+    driver // Coral and Algae Floor Pickup
+        .rightTrigger()
+        .onTrue(superstructure.ExtendIntake())
+        .onFalse(superstructure.RetractIntake());
 
+    driver.rightBumper().onTrue(null);
+
+    
     // driver
     //     .a()
     //     .onTrue(intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed))
@@ -210,8 +207,6 @@ public class Robot extends LoggedRobot {
     //         Commands.sequence(
     //             intake.changePivotSetpoint(Constants.Intake.maxAngle),
     //             intake.changeRollerSpeed(0)));
-
-    operator.button(1).onTrue(intake.changeRollerSpeed(0));
 
     Logger.start();
   }

@@ -30,6 +30,8 @@ public class Superstructure {
   Outtake outtake;
   Intake intake;
 
+  boolean coralMode = true;
+
   private String selectedReef = "Left"; // Selected Reef Pole
 
   private int elevatorLevel = 2; // Selected Reef Level
@@ -161,6 +163,48 @@ public class Superstructure {
         elevator.changeSetpoint(0),
         Commands.waitUntil(elevator::atSetpoint));
   }
+
+  public boolean CoralMode() {
+    return coralMode;
+  }
+
+  public Command ChangeCoralMode(boolean isCoral) {
+    return Commands.runOnce(
+        () -> {
+          coralMode = isCoral;
+        });
+  }
+
+  public Command ExtendIntake() {
+    if (coralMode) {
+      return Commands.sequence(
+          intake.changePivotSetpoint(Units.degreesToRadians(2)),
+          intake.changeRollerSpeed(
+              -Constants.Intake.kGroundIntakeSpeed)); // intake coral off ground
+    } else {
+      return Commands.sequence(
+          intake.changePivotSetpoint(Units.degreesToRadians(60)),
+          intake.changeRollerSpeed(Constants.Intake.kGroundIntakeSpeed)); // intake algae
+    }
+  }
+
+  public Command RetractIntake() {
+    if (coralMode) {
+      return Commands.sequence(
+          intake.changePivotSetpoint(Constants.Intake.maxAngle),
+          intake.changeRollerSpeed(-Constants.Intake.kFeedSpeed / 1.5));
+    } else {
+      return Commands.sequence(
+          intake.changePivotSetpoint(Constants.Intake.maxAngle),
+          intake.changeRollerSpeed(Constants.Intake.kFeedSpeed));
+    }
+  }
+
+  // public Command ScoreIntakePiece(){
+  //   if()
+
+  //   return null;
+  // }
 
   // Simple Test Auto that just runs a path.
   public AutoRoutine testAuto(AutoFactory factory, boolean mirror) {
