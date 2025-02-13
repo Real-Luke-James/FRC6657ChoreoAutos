@@ -180,14 +180,15 @@ public class Robot extends LoggedRobot {
     operator.button(2).onTrue(superstructure.ChangeCoralMode(true));
     operator.button(5).onTrue(superstructure.ChangeCoralMode(false));
 
+    operator.button(3).onTrue(superstructure.AlignRight());
+    operator.button(5).onTrue(superstructure.AlignLeft());
+
     driver
         .y()
         .onTrue(
             drivebase.resetOdometry(
                 new Pose2d(
                     drivebase.getPose().getX(), drivebase.getPose().getY(), new Rotation2d())));
-
-    
 
     driver.povUp().onTrue(superstructure.raiseElevator());
     driver.povDown().onTrue(elevator.changeSetpoint(0));
@@ -197,9 +198,8 @@ public class Robot extends LoggedRobot {
         .onTrue(superstructure.ExtendIntake())
         .onFalse(superstructure.RetractIntake());
 
-    driver.rightBumper().onTrue(null);
+    driver.leftBumper().onTrue(superstructure.ScoreIntakePiece());
 
-    
     // driver
     //     .a()
     //     .onTrue(intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed))

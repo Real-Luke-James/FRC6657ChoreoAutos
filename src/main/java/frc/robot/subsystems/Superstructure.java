@@ -31,6 +31,7 @@ public class Superstructure {
   Intake intake;
 
   boolean coralMode = true;
+  boolean isAlignedRight = true;
 
   private String selectedReef = "Left"; // Selected Reef Pole
 
@@ -134,6 +135,20 @@ public class Superstructure {
         });
   }
 
+  public Command AlignRight() {
+    return Commands.runOnce(
+        () -> {
+          isAlignedRight = true;
+        });
+  }
+
+  public Command AlignLeft() {
+    return Commands.runOnce(
+        () -> {
+          isAlignedRight = false;
+        });
+  }
+
   public Command raiseElevator() {
     return elevator.changeSetpoint(() -> elevatorSetpoints[elevatorLevel]);
   }
@@ -200,11 +215,17 @@ public class Superstructure {
     }
   }
 
-  // public Command ScoreIntakePiece(){
-  //   if()
-
-  //   return null;
-  // }
+  public Command ScoreIntakePiece() {
+    if (coralMode) {
+      return Commands.sequence(
+          intake.changePivotSetpoint(Constants.Intake.minAngle),
+          intake.changeRollerSpeed(Constants.Intake.kFeedSpeed));
+    } else {
+      return Commands.sequence(
+          intake.changePivotSetpoint(Units.degreesToRadians(Constants.Intake.minAngle)),
+          intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed));
+    }
+  }
 
   // Simple Test Auto that just runs a path.
   public AutoRoutine testAuto(AutoFactory factory, boolean mirror) {
