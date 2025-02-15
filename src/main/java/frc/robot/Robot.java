@@ -146,11 +146,12 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 2,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 2)));
 
-    driver.leftTrigger().onTrue(outtake.changeRollerSetpoint(-0.4)); // Score elevator coral
+    driver.rightBumper().onTrue(outtake.changeRollerSetpoint(-0.4)); // Score elevator coral
     coralDetected
         .onTrue(outtake.changeRollerSetpoint(0))
         .onFalse(Commands.waitSeconds(0.3).andThen(outtake.changeRollerSetpoint(0)));
-    driver.leftTrigger().onFalse(outtake.changeRollerSetpoint(0));
+    driver.rightBumper().onFalse(outtake.changeRollerSetpoint(0));
+    driver.leftTrigger().onFalse(outtake.changeRollerSetpoint(0)); // This line is for when coral is scored with the score button. If it annoys Jacob it can be removed
 
     // driver
     //     .a()
@@ -198,7 +199,7 @@ public class Robot extends LoggedRobot {
         .onTrue(superstructure.ExtendIntake())
         .onFalse(superstructure.RetractIntake());
 
-    driver.leftBumper().onTrue(superstructure.ScoreIntakePiece());
+    driver.leftBumper().onTrue(superstructure.Score());
 
     // driver
     //     .a()

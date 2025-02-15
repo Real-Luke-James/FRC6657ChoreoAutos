@@ -53,6 +53,10 @@ public class Elevator extends SubsystemBase {
     return MathUtil.isNear(inputs.kSetpoint, inputs.kPosition, Units.inchesToMeters(1));
   }
 
+  public boolean grounded() {
+    return inputs.kPosition <= 0;
+  }
+
   public Command setRawVoltage(double voltage) {
     return this.runOnce(
         () -> {

@@ -174,12 +174,14 @@ public class Superstructure {
   public Command ScoreCoral() {
     return Commands.sequence(
         Commands.print("Score Coral"),
+        outtake.changeRollerSetpoint(-0.4),
         Commands.waitSeconds(0.25),
         elevator.changeSetpoint(0),
-        Commands.waitUntil(elevator::atSetpoint));
+        Commands.waitUntil(elevator::atSetpoint),
+        outtake.changeRollerSetpoint(0));
   }
 
-  public boolean CoralMode() {
+  public boolean GetCoralMode() {
     return coralMode;
   }
 
@@ -191,40 +193,40 @@ public class Superstructure {
   }
 
   public Command ExtendIntake() {
-    if (coralMode) {
-      return Commands.sequence(
-          intake.changePivotSetpoint(Units.degreesToRadians(2)),
-          intake.changeRollerSpeed(
-              -Constants.Intake.kGroundIntakeSpeed)); // intake coral off ground
-    } else {
-      return Commands.sequence(
-          intake.changePivotSetpoint(Units.degreesToRadians(60)),
-          intake.changeRollerSpeed(Constants.Intake.kGroundIntakeSpeed)); // intake algae
-    }
+    return Commands.either(
+        Commands.sequence(
+            intake.changePivotSetpoint(Units.degreesToRadians(2)),
+            intake.changeRollerSpeed(
+                -Constants.Intake.kGroundIntakeSpeed)), // intake coral off ground,
+        Commands.sequence(
+            intake.changePivotSetpoint(Units.degreesToRadians(60)),
+            intake.changeRollerSpeed(Constants.Intake.kGroundIntakeSpeed)), // intake algae,
+        () -> coralMode);
   }
 
   public Command RetractIntake() {
-    if (coralMode) {
-      return Commands.sequence(
-          intake.changePivotSetpoint(Constants.Intake.maxAngle),
-          intake.changeRollerSpeed(-Constants.Intake.kFeedSpeed / 1.5));
-    } else {
-      return Commands.sequence(
-          intake.changePivotSetpoint(Constants.Intake.maxAngle),
-          intake.changeRollerSpeed(Constants.Intake.kFeedSpeed));
-    }
+    return Commands.either(
+        Commands.sequence(
+            intake.changePivotSetpoint(Constants.Intake.maxAngle),
+            intake.changeRollerSpeed(-Constants.Intake.kFeedSpeed / 1.5)),
+        Commands.sequence(
+            intake.changePivotSetpoint(Constants.Intake.maxAngle),
+            intake.changeRollerSpeed(Constants.Intake.kFeedSpeed)),
+        () -> coralMode);
   }
 
-  public Command ScoreIntakePiece() {
-    if (coralMode) {
-      return Commands.sequence(
-          intake.changePivotSetpoint(Constants.Intake.minAngle),
-          intake.changeRollerSpeed(Constants.Intake.kFeedSpeed));
-    } else {
-      return Commands.sequence(
-          intake.changePivotSetpoint(Units.degreesToRadians(Constants.Intake.minAngle)),
-          intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed));
-    }
+  public Command Score() {
+    return Commands.either(
+        Commands.either(
+            Commands.sequence(
+                intake.changePivotSetpoint(Constants.Intake.minAngle),
+                intake.changeRollerSpeed(Constants.Intake.kFeedSpeed)),
+            Commands.sequence(
+                intake.changePivotSetpoint(Units.degreesToRadians(Constants.Intake.minAngle)),
+                intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed)),
+            () -> coralMode),
+        ScoreCoral(),
+        elevator::grounded);
   }
 
   // Simple Test Auto that just runs a path.
