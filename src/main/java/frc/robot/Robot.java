@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Swerve.ModuleInformation;
 import frc.robot.Constants.VisionConstants;
 import frc.robot.subsystems.Superstructure;
@@ -136,8 +135,6 @@ public class Robot extends LoggedRobot {
       Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     }
 
-    Trigger coralDetected = new Trigger(outtake::coralDetected);
-
     drivebase.setDefaultCommand(
         drivebase.drive(
             () ->
@@ -146,43 +143,15 @@ public class Robot extends LoggedRobot {
                     MathUtil.applyDeadband(-driver.getLeftX(), 0.1) * 2,
                     MathUtil.applyDeadband(-driver.getRightX(), 0.1) * 2)));
 
-    driver.rightBumper().onTrue(outtake.changeRollerSetpoint(-0.4)); // Score elevator coral
-    coralDetected
-        .onTrue(outtake.changeRollerSetpoint(0))
-        .onFalse(Commands.waitSeconds(0.3).andThen(outtake.changeRollerSetpoint(0)));
-    driver.rightBumper().onFalse(outtake.changeRollerSetpoint(0));
-    driver.leftTrigger().onFalse(outtake.changeRollerSetpoint(0)); // This line is for when coral is scored with the score button. If it annoys Jacob it can be removed
+    operator.button(9).onTrue(superstructure.selectElevatorHeight(2));
+    operator.button(8).onTrue(superstructure.selectElevatorHeight(3));
+    operator.button(7).onTrue(superstructure.selectElevatorHeight(4));
 
-    // driver
-    //     .a()
-    //     .whileTrue(
-    //         drivebase
-    //             .goToPose(() -> superstructure.getNearestReef())
-    //             .andThen(
-    //                 Commands.sequence(
-    //                     Commands.runOnce(() -> driver.setRumble(RumbleType.kRightRumble, 1)),
-    //                     Commands.waitSeconds(0.25),
-    //                     Commands.runOnce(() -> driver.setRumble(RumbleType.kRightRumble, 0)))));
+    operator.button(2).onTrue(superstructure.selectPiece("Coral"));
+    operator.button(5).onTrue(superstructure.selectPiece("Algae"));
 
-    driver.povLeft().onTrue(superstructure.selectReef("Left"));
-    driver.povRight().onTrue(superstructure.selectReef("Right"));
-
-    operator
-        .button(1)
-        .onTrue(
-            intake
-                .changeRollerSpeed(0)
-                .andThen(outtake.changeRollerSetpoint(0))); // zero out rollers if needed
-
-    operator.button(9).onTrue(superstructure.selectElevatorHeight(2)); // button 2
-    operator.button(8).onTrue(superstructure.selectElevatorHeight(3)); // button 3
-    operator.button(7).onTrue(superstructure.selectElevatorHeight(4)); // button 4
-
-    operator.button(2).onTrue(superstructure.ChangeCoralMode(true));
-    operator.button(5).onTrue(superstructure.ChangeCoralMode(false));
-
-    operator.button(3).onTrue(superstructure.AlignRight());
-    operator.button(5).onTrue(superstructure.AlignLeft());
+    operator.button(3).onTrue(superstructure.selectReef("Left"));
+    operator.button(5).onTrue(superstructure.selectReef("Right"));
 
     driver
         .y()
@@ -191,23 +160,24 @@ public class Robot extends LoggedRobot {
                 new Pose2d(
                     drivebase.getPose().getX(), drivebase.getPose().getY(), new Rotation2d())));
 
+    // Manual Elevator Controls
     driver.povUp().onTrue(superstructure.raiseElevator());
     driver.povDown().onTrue(elevator.changeSetpoint(0));
 
-    driver // Coral and Algae Floor Pickup
+    // Ground Intake
+    driver
         .rightTrigger()
-        .onTrue(superstructure.ExtendIntake())
+        .onTrue(superstructure.GroundIntake())
         .onFalse(superstructure.RetractIntake());
 
-    driver.leftBumper().onTrue(superstructure.Score());
+    // HP Intake
+    driver
+        .rightBumper()
+        .onTrue(superstructure.ElevatorIntake())
+        .onFalse(outtake.changeRollerSetpoint(0));
 
-    // driver
-    //     .a()
-    //     .onTrue(intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed))
-    //     .onFalse(
-    //         Commands.sequence(
-    //             intake.changePivotSetpoint(Constants.Intake.maxAngle),
-    //             intake.changeRollerSpeed(0)));
+    // General Score
+    driver.leftTrigger().onTrue(superstructure.Score()).onFalse(superstructure.HomeRobot());
 
     Logger.start();
   }
