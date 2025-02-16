@@ -163,7 +163,7 @@ public class Superstructure {
                 .andThen(Commands.waitUntil(elevator::atSetpoint))));
   }
 
-  //Command for intaking coral from the human player station
+  // Command for intaking coral from the human player station
   public Command ElevatorIntake() {
     return Commands.sequence(
         outtake.changeRollerSetpoint(-0.5),
@@ -171,7 +171,7 @@ public class Superstructure {
         outtake.changeRollerSetpoint(0));
   }
 
-  //Command for intaking game pieces from the ground
+  // Command for intaking game pieces from the ground
   public Command GroundIntake() {
     return Commands.either(
         Commands.sequence( // Coral
@@ -183,7 +183,7 @@ public class Superstructure {
         () -> selectedPiece == "Coral");
   }
 
-  //Retracts the intake, while keeping a grip on the game piece
+  // Retracts the intake, while keeping a grip on the game piece
   public Command RetractIntake() {
     return Commands.either(
         Commands.sequence(
@@ -195,7 +195,7 @@ public class Superstructure {
         () -> selectedPiece == "Coral");
   }
 
-  //Scores a piece out of the ground intake.
+  // Scores a piece out of the ground intake.
   public Command GroundIntakeScore() {
     return Commands.either(
             Commands.sequence(
@@ -211,7 +211,7 @@ public class Superstructure {
                 intake.changeRollerSpeed(0)));
   }
 
-  //Scores a coral from the elevator
+  // Scores a coral from the elevator
   public Command ElevatorScore() {
     return Commands.sequence(
         outtake.changeRollerSetpoint(-0.4),
@@ -220,13 +220,14 @@ public class Superstructure {
         outtake.changeRollerSetpoint(0));
   }
 
-  //Scores a piece.
-  //If the elevator is up it will score from the elevator, otherwise it will score from the ground intake.
+  // Scores a piece.
+  // If the elevator is up it will score from the elevator, otherwise it will score from the ground
+  // intake.
   public Command Score() {
     return Commands.either(GroundIntakeScore(), ElevatorScore(), elevator::isDown);
   }
 
-  //Stows all mechanisms, and stops all rollers.
+  // Stows all mechanisms, and stops all rollers.
   public Command HomeRobot() {
     return Commands.sequence(
         outtake.changeRollerSetpoint(0),
