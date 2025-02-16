@@ -70,7 +70,7 @@ public class Superstructure {
   }
 
   // Gets the closest reef sector to the robot.
-  @AutoLogOutput(key = "Auto Align Pose")
+  @AutoLogOutput(key = "AutoAim/TargetPose")
   public Pose2d getNearestReef() {
 
     // Grab the alliance color

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Elevator extends SubsystemBase {
@@ -49,16 +50,14 @@ public class Elevator extends SubsystemBase {
                     Constants.Elevator.maxHeight)));
   }
 
+  @AutoLogOutput(key = "Elevator/AtSetpoint")
   public boolean atSetpoint() {
     return MathUtil.isNear(inputs.kSetpoint, inputs.kPosition, Units.inchesToMeters(1));
   }
 
+  @AutoLogOutput(key = "Elevator/IsDown")
   public boolean isDown() {
     return MathUtil.isNear(0, inputs.kPosition, Units.inchesToMeters(1)) && inputs.kSetpoint == 0;
-  }
-
-  public double position() {
-    return inputs.kPosition;
   }
 
   @Override
