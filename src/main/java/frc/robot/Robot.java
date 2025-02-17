@@ -125,7 +125,8 @@ public class Robot extends LoggedRobot {
     autoChooser.addOption("Test Auto Processor", superstructure.testAuto(autoFactory, true).cmd());
     autoChooser.addOption("One Piece", superstructure.onePiece(autoFactory, false).cmd());
     autoChooser.addOption("One Piece Processor", superstructure.onePiece(autoFactory, true).cmd());
-    
+    autoChooser.addOption("Two Piece 180", superstructure.TwoCoral180(autoFactory, false).cmd());
+    autoChooser.addOption("Two Piece 180 Processor", superstructure.TwoCoral180(autoFactory, true).cmd());
   }
 
   @SuppressWarnings("resource")
@@ -172,7 +173,8 @@ public class Robot extends LoggedRobot {
     //     .whileTrue(
     //         Commands.sequence(
     //             Commands.parallel( // Alignment Commands
-    //                 drivebase.goToPose(superstructure::getNearestReef), // Align Drivebase to Reef
+    //                 drivebase.goToPose(superstructure::getNearestReef), // Align Drivebase to
+    // Reef
     //                 superstructure.raiseElevator() // Raise Elevator to selected leel
     //                 ),
     //             Commands.waitUntil(elevator::atSetpoint), // Ensure the elevator is fully raised
@@ -255,8 +257,6 @@ public class Robot extends LoggedRobot {
     return Commands.sequence(
         Commands.runOnce(() -> driver.setRumble(RumbleType.kRightRumble, intensity)),
         Commands.waitSeconds(duration),
-        Commands.runOnce(() -> driver.setRumble(RumbleType.kRightRumble, 0)
-        ));
+        Commands.runOnce(() -> driver.setRumble(RumbleType.kRightRumble, 0)));
   }
 }
-

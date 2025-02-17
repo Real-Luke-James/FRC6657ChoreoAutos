@@ -152,7 +152,7 @@ public class Superstructure {
   // This command aligns the drivebase to the nearest reef and raises the elevator to the selected
   // reef level.
   // Command will end when the drivebase is aligned and the elevator is at the selected reef level.
-  public Command ReefAlgin(String side, int level) {
+  public Command ReefAlign(String side, int level) {
     return Commands.sequence(
         selectReef(side),
         selectElevatorHeight(level),
@@ -251,7 +251,7 @@ public class Superstructure {
     S_P1.atTime("Score")
         .onTrue(
             Commands.sequence(
-                ReefAlgin(mirror ? "Right" : "Left", 4).asProxy(),
+                ReefAlign(mirror ? "Right" : "Left", 4).asProxy(),
                 Score().asProxy(),
                 new ScheduleCommand(P1_I1.cmd())));
 
@@ -267,7 +267,7 @@ public class Superstructure {
         .atTime("Score")
         .onTrue(
             Commands.sequence(
-                ReefAlgin(mirror ? "Right" : "Left", 4).asProxy(),
+                ReefAlign(mirror ? "Right" : "Left", 4).asProxy(),
                 Score().asProxy(),
                 new ScheduleCommand(P2_I2.cmd())));
 
@@ -283,14 +283,14 @@ public class Superstructure {
         .atTime("Score")
         .onTrue(
             Commands.sequence(
-                ReefAlgin(mirror ? "Left" : "Right", 4).asProxy(), Score().asProxy()));
+                ReefAlign(mirror ? "Left" : "Right", 4).asProxy(), Score().asProxy()));
 
     routine.active().onTrue(Commands.sequence(S_P1.resetOdometry(), S_P1.cmd()));
 
     return routine;
   }
 
-  public AutoRoutine taxi (AutoFactory factory, boolean mirror) {
+  public AutoRoutine taxi(AutoFactory factory, boolean mirror) {
     final AutoRoutine routine = factory.newRoutine("Taxi");
 
     String mirrorFlag = mirror ? "mirrored_" : "";
@@ -302,7 +302,7 @@ public class Superstructure {
     return routine;
   }
 
-  public AutoRoutine onePiece (AutoFactory factory, boolean mirror) {
+  public AutoRoutine onePiece(AutoFactory factory, boolean mirror) {
 
     final AutoRoutine routine = factory.newRoutine("One Piece");
 
@@ -314,9 +314,48 @@ public class Superstructure {
     S_P1.atTime("Score")
         .onTrue(
             Commands.sequence(
-                ReefAlgin(mirror ? "Right" : "Left", 4).asProxy(),
+                ReefAlign(mirror ? "Right" : "Left", 4).asProxy(),
                 Score().asProxy(),
                 new ScheduleCommand(P1_Pos.cmd()))); // ends auto out of the way
+
+    routine.active().onTrue(Commands.sequence(S_P1.resetOdometry(), S_P1.cmd()));
+
+    return routine;
+  }
+
+  public AutoRoutine TwoCoral180(AutoFactory factory, boolean mirror) {
+
+    final AutoRoutine routine = factory.newRoutine("Two Coral 180 degree turn");
+
+    String mirrorFlag = mirror ? "mirrored_" : "";
+
+    final AutoTrajectory S_P1 = routine.trajectory(mirrorFlag + "Two Coral 180 degree turn", 0);
+    final AutoTrajectory P1_I1 = routine.trajectory(mirrorFlag + "Two Coral 180 degree turn", 1);
+    final AutoTrajectory I1_P2 = routine.trajectory(mirrorFlag + "Two Coral 180 degree turn", 2);
+    final AutoTrajectory P2_Pos = routine.trajectory(mirrorFlag + "Two Coral 180 degree turn", 3);
+
+    S_P1.atTime("Score")
+        .onTrue(
+            Commands.sequence(
+                ReefAlign(mirror ? "Right" : "Left", 4).asProxy(),
+                Score().asProxy(),
+                new ScheduleCommand(P1_I1.cmd())));
+
+    P1_I1
+        .done()
+        .onTrue(
+            Commands.sequence(
+                outtake.changeRollerSetpoint(-0.5).asProxy(),
+                Commands.waitUntil(outtake::coralDetected).withTimeout(3).asProxy(),
+                new ScheduleCommand(I1_P2.cmd())));
+
+    I1_P2
+        .atTime("Score")
+        .onTrue(
+            Commands.sequence(
+                ReefAlign(mirror ? "Right" : "Left", 4).asProxy(),
+                Score().asProxy(),
+                new ScheduleCommand(P2_Pos.cmd())));
 
     routine.active().onTrue(Commands.sequence(S_P1.resetOdometry(), S_P1.cmd()));
 
