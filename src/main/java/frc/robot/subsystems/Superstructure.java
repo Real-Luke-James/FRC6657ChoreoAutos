@@ -289,4 +289,37 @@ public class Superstructure {
 
     return routine;
   }
+
+  public AutoRoutine taxi (AutoFactory factory, boolean mirror) {
+    final AutoRoutine routine = factory.newRoutine("Taxi");
+
+    String mirrorFlag = mirror ? "mirrored_" : "";
+
+    final AutoTrajectory S_Pos = routine.trajectory(mirrorFlag + "Taxi", 0);
+
+    routine.active().onTrue(Commands.sequence(S_Pos.resetOdometry(), S_Pos.cmd()));
+
+    return routine;
+  }
+
+  public AutoRoutine onePiece (AutoFactory factory, boolean mirror) {
+
+    final AutoRoutine routine = factory.newRoutine("One Piece");
+
+    String mirrorFlag = mirror ? "mirrored_" : "";
+
+    final AutoTrajectory S_P1 = routine.trajectory(mirrorFlag + "One Piece", 0);
+    final AutoTrajectory P1_Pos = routine.trajectory(mirrorFlag + "One Piece", 1);
+
+    S_P1.atTime("Score")
+        .onTrue(
+            Commands.sequence(
+                ReefAlgin(mirror ? "Right" : "Left", 4).asProxy(),
+                Score().asProxy(),
+                new ScheduleCommand(P1_Pos.cmd()))); // ends auto out of the way
+
+    routine.active().onTrue(Commands.sequence(S_P1.resetOdometry(), S_P1.cmd()));
+
+    return routine;
+  }
 }
