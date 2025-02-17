@@ -202,7 +202,7 @@ public class Superstructure {
                 intake.changePivotSetpoint(Constants.Intake.coralScoreAngle),
                 intake.changeRollerSpeed(Constants.Intake.kFeedSpeed)),
             Commands.sequence(
-                intake.changePivotSetpoint(Constants.Intake.coralScoreAngle),
+                intake.changePivotSetpoint(Constants.Intake.algaeScoreAngle),
                 intake.changeRollerSpeed(-Constants.Intake.kGroundIntakeSpeed)),
             () -> selectedPiece == "Coral")
         .andThen(
@@ -298,6 +298,18 @@ public class Superstructure {
     final AutoTrajectory S_Pos = routine.trajectory(mirrorFlag + "Taxi", 0);
 
     routine.active().onTrue(Commands.sequence(S_Pos.resetOdometry(), S_Pos.cmd()));
+
+    return routine;
+  }
+
+  public AutoRoutine taxiMiddleL1(AutoFactory factory){
+    final AutoRoutine routine = factory.newRoutine("Taxi Middle L1"); // no need for mirror since it is allined perfectly in the middle
+
+    final AutoTrajectory S_P1 = routine.trajectory("Taxi Middle L1", 0);
+
+    S_P1.done().onTrue(GroundIntakeScore().asProxy());
+
+    routine.active().onTrue(Commands.sequence(S_P1.resetOdometry(), S_P1.cmd()));
 
     return routine;
   }
